@@ -5,9 +5,15 @@
 	"scripts": {
 		"build": "npm run prisma:generate && tsc",
 		"start": "node ./dist/src/index.js",
-		"prisma:deploy": "npx prisma migrate deploy",
+		"prisma:deploy": "npx prisma migrate deploy && npx prisma db seed",
 		"prisma:generate": "npx prisma generate --schema=./prisma/schema.prisma",
-		"postinstall": "npx prisma generate"
+		"postinstall": "npx prisma generate",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "nodemon --files ./src/index.ts",
+		"reset-migration": "rm -rf prisma/migrations && npx prisma migrate reset --force --skip-seed && npx prisma migrate dev --name init && npx prisma db seed",
+		"refresh-schedule": "ts-node ./prisma/seeder/refreshSchedule.ts",
+		"prisma-studio": "npx prisma studio --port 5556",
+		"mock-icar": "ts-node ./src/utils/icar_mock.ts"
 	},
 	"prisma": {
 		"seed": "ts-node prisma/seeder/seed.ts"
