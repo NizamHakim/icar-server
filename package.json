@@ -6,13 +6,7 @@
 		"build": "npx prisma generate && tsc",
 		"start": "node ./dist/src/index.js",
 		"prisma:deploy": "npx prisma migrate deploy",
-		"postinstall": "npx prisma generate",
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "nodemon --files ./src/index.ts",
-		"reset-migration": "rm -rf prisma/migrations && npx prisma migrate reset --force --skip-seed && npx prisma migrate dev --name init && npx prisma db seed",
-		"refresh-schedule": "ts-node ./prisma/seeder/refreshSchedule.ts",
-		"prisma-studio": "npx prisma studio --port 5556",
-		"mock-icar": "ts-node ./src/utils/icar_mock.ts"
+		"postinstall": "npx prisma generate"
 	},
 	"prisma": {
 		"seed": "ts-node prisma/seeder/seed.ts"
