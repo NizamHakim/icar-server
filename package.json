@@ -4,7 +4,7 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "npm run prisma:generate && tsc",
-		"start": "node ./dist/src/index.js",
+		"start": "npm run prisma:deploy && node ./dist/src/index.js",
 		"prisma:deploy": "npx prisma migrate deploy && npx prisma db seed",
 		"prisma:generate": "npx prisma generate --schema=./prisma/schema.prisma",
 		"postinstall": "npx prisma generate",
