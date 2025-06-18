@@ -3,9 +3,10 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-		"build": "npx prisma generate && tsc",
+		"build": "npm run prisma:generate && tsc",
 		"start": "node ./dist/src/index.js",
 		"prisma:deploy": "npx prisma migrate deploy",
+		"prisma:generate": "npx prisma generate --schema=./prisma/schema.prisma",
 		"postinstall": "npx prisma generate"
 	},
 	"prisma": {
