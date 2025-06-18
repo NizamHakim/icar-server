@@ -3,9 +3,9 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-		"build": "prisma generate && tsc",
+		"build": "npx prisma generate && tsc",
 		"start": "node ./dist/src/index.js",
-		"prisma:deploy": "prisma migrate deploy",
+		"prisma:deploy": "npx prisma migrate deploy",
 		"postinstall": "npx prisma generate",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "nodemon --files ./src/index.ts",
