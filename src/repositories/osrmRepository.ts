@@ -35,10 +35,10 @@ export const osrmRepository = {
 		});
 	},
 	getDistanceAndDuration: async (
-		coordinateA: Coordinate,
-		coordinateB: Coordinate
+		fromCoordinate: Coordinate,
+		toCoordinate: Coordinate
 	) => {
-		const url = `${process.env.OSRM_URL}/${coordinateA.longitude},${coordinateA.latitude};${coordinateB.longitude},${coordinateB.latitude}`;
+		const url = `${process.env.OSRM_URL}/${fromCoordinate.longitude},${fromCoordinate.latitude};${toCoordinate.longitude},${toCoordinate.latitude}`;
 
 		const response = await fetch(url, {
 			method: "GET",

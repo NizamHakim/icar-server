@@ -4,17 +4,21 @@ import { ticketMiddleware } from "../middlewares/ticketMiddleware";
 
 const router = express.Router();
 
+// /?userId=1status=IN_QUEUE
 router.get(
 	"/user/:userId/status/:status",
 	ticketMiddleware.validateGetTicketByStatus,
 	ticketController.getTicketByStatus
 );
+
+// /?userId=1status=IN_QUEUE&sortBy=arrivalTime&sortOrder=asc&limit=1
 router.get(
 	"/user/:userId/closest",
 	ticketMiddleware.validateGetClosestUserTicket,
 	ticketController.getClosestUserTicket
 );
 
+// review
 router.get("/review-options", ticketController.getReviewAndSuggestionOptions);
 
 router.get(

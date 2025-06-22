@@ -37,7 +37,7 @@ async function main() {
 	});
 
 	icars.forEach((icar) => {
-		const ws = new WebSocket("ws://localhost:5000", {
+		const ws = new WebSocket("wss://icar-server-production.up.railway.app", {
 			headers: {
 				"icar-id": icar.id.toString(),
 				"client-type": "icar",

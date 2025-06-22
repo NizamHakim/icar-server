@@ -80,8 +80,8 @@ export const ticketService = {
 
 		const ticketsWithDistance = tickets.map(async (ticket) => {
 			const { distance } = await osrmRepository.getDistanceAndDuration(
-				ticket.schedule.icarStop.coordinate as Coordinate,
-				icarPosition
+				icarPosition,
+				ticket.schedule.icarStop.coordinate as Coordinate
 			);
 
 			const distanceStatus = getTicketDistanceStatus(distance);
