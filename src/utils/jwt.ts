@@ -1,8 +1,7 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { User } from "@prisma/client";
-import { config } from "../../config/config";
 
-const JWT_SECRET = config.security.jwtSecret;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export const jwtUtils = {
 	signToken: (user: User) => {

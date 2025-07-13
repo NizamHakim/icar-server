@@ -5,7 +5,7 @@ import { jwtUtils } from "../utils/jwt";
 import { errorMessages } from "../errors/core/errorMessages";
 import { UnprocessableEntityError } from "../errors/UnprocessableEntityError";
 
-const SALT_ROUNDS = 10;
+const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || "10");
 
 export const authService = {
 	getUserData: async (userId: number) => {

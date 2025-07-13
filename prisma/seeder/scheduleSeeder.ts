@@ -1,4 +1,5 @@
-import { config } from "../../config/config";
+import dotenv from "dotenv";
+dotenv.config();
 import { PrismaClient, ScheduleSession } from "@prisma/client";
 import { DateTime } from "luxon";
 import { BadGatewayError } from "../../src/errors/BadGatewayError";
@@ -133,7 +134,7 @@ async function generateSchedule(
 
 		const stopMinutes = 1;
 		const response = await fetch(
-			`${config.osrm.url}/${
+			`${process.env.OSRM_URL}/${
 				(routeStopWaypoint[idx % mod]!.icarStop.coordinate as Coordinate)
 					.longitude
 			},${
