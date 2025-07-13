@@ -5,26 +5,34 @@ import { checkOrThrowValidationError } from "../errors/core/checkOrThrowValidati
 import { matchedData } from "express-validator";
 
 export const icarController = {
-	getIcarsWithScheduleByStopId: async (req: Request, res: Response) => {
+	getIcars: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
 			const data = matchedData(req);
-			const icarStopId = parseInt(data.icarStopId);
-			const icars = await icarService.getIcarsWithScheduleByStopId(icarStopId);
 
+			if (data.icarStopId) {
+				const icarStopId = parseInt(data.icarStopId);
+				const icars = await icarService.getIcarsWithScheduleByStopId(
+					icarStopId
+				);
+				res.status(200).json(icars);
+				return;
+			}
+
+			const icars = await icarService.getIcars();
 			res.status(200).json(icars);
 		} catch (error) {
 			handleError(error, res);
 		}
 	},
-	verifyIcarId: async (req: Request, res: Response) => {
+	getIcarById: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
 			const data = matchedData(req);
 			const icarId = parseInt(data.icarId);
-			const icar = await icarService.verifyIcarId(icarId);
+			const icar = await icarService.getIcarById(icarId);
 
 			res.status(200).json(icar);
 		} catch (error) {

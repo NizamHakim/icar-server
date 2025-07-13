@@ -12,8 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.scheduleService = void 0;
 const scheduleRepository_1 = require("../repositories/scheduleRepository");
 exports.scheduleService = {
-    getScheduleListByStopAndRoute: (icarStopId, icarRouteId) => __awaiter(void 0, void 0, void 0, function* () {
+    // USECASE
+    getSchedulesByStopAndRoute: (icarStopId, icarRouteId) => __awaiter(void 0, void 0, void 0, function* () {
         const scheduleList = yield scheduleRepository_1.scheduleRepository.getScheduleListByStopAndRoute(icarStopId, icarRouteId);
         return scheduleList;
+    }),
+    // FALLBACK
+    getSchedules: () => __awaiter(void 0, void 0, void 0, function* () {
+        return yield scheduleRepository_1.scheduleRepository.getSchedules();
     }),
 };

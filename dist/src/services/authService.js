@@ -50,7 +50,7 @@ exports.authService = {
     }),
     signup: (name, email, password) => __awaiter(void 0, void 0, void 0, function* () {
         const hashedPassword = yield bcrypt_1.default.hash(password, SALT_ROUNDS);
-        const newUser = yield userRepository_1.userRepository.createNewUser(name, email, hashedPassword);
+        const newUser = yield userRepository_1.userRepository.createUser(name, email, hashedPassword);
         return {
             user: newUser,
             token: jwt_1.jwtUtils.signToken(newUser),

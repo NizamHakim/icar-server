@@ -5,9 +5,9 @@ import { scheduleMiddleware } from "../middlewares/scheduleMiddleware";
 const router = express.Router();
 
 router.get(
-	"/icar-stop/:icarStopId/icar-route/:icarRouteId",
-	scheduleMiddleware.validateGetScheduleListByStopAndRoute,
-	scheduleController.getScheduleListByStopAndRoute
+	"/",
+	scheduleMiddleware.validateGetSchedules,
+	scheduleController.getSchedules
 );
 
 export default router;

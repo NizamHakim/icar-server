@@ -1,106 +1,80 @@
 import { checkSchema } from "express-validator";
-import { userRepository } from "../repositories/userRepository";
-import { jwtUtils } from "../utils/jwt";
+import { validateAuthToken } from "./customValidators/validateAuthToken";
+import { errorMessages } from "../errors/core/errorMessages";
+import { validateEmail } from "./customValidators/validateEmail";
+import { validatePassword } from "./customValidators/validatePassword";
 
 export const authMiddleware = {
-	validateToken: checkSchema(
-		{
-			"x-auth-token": {
-				custom: {
-					bail: true,
-					options: async (value, { req }) => {
-						const decodedToken = jwtUtils.verifyToken(value);
-						if (!decodedToken.userId) {
-							throw new Error("INVALID_TOKEN");
-						}
-
-						req.user = { id: decodedToken.userId };
-						return true;
-					},
-					errorMessage: "INVALID_TOKEN",
-				},
+	validateToken: checkSchema({
+		"x-auth-token": {
+			custom: {
+				bail: true,
+				options: validateAuthToken,
+				errorMessage: errorMessages.auth.invalidToken,
 			},
 		},
-		["headers"]
-	),
-	validateSignup: checkSchema(
-		{
-			name: {
-				notEmpty: {
-					bail: true,
-					errorMessage: "NAME_REQUIRED",
-				},
-			},
-			email: {
-				notEmpty: {
-					bail: true,
-					errorMessage: "EMAIL_REQUIRED",
-				},
-				isEmail: {
-					bail: true,
-					errorMessage: "EMAIL_INVALID_FORMAT",
-				},
-				custom: {
-					bail: true,
-					options: async (value, { req }) => {
-						const user = await userRepository.getUserByEmail(value);
-						if (user) {
-							throw new Error("EMAIL_ALREADY_REGISTERED");
-						}
-						return true;
-					},
-					errorMessage: "EMAIL_ALREADY_REGISTERED",
-				},
-			},
-			password: {
-				notEmpty: {
-					bail: true,
-					errorMessage: "PASSWORD_REQUIRED",
-				},
-				isLength: {
-					bail: true,
-					options: { min: 8 },
-					errorMessage: "PASSWORD_MIN_LENGTH",
-				},
-			},
-			confirmPassword: {
-				notEmpty: {
-					bail: true,
-					errorMessage: "CONFIRM_PASSWORD_REQUIRED",
-				},
-				custom: {
-					bail: true,
-					options: (value, { req }) => {
-						if (value !== req.body.password) {
-							throw new Error("CONFIRM_PASSWORD_MISMATCH");
-						}
-						return true;
-					},
-					errorMessage: "CONFIRM_PASSWORD_MISMATCH",
-				},
+	}),
+	validateSignup: checkSchema({
+		name: {
+			notEmpty: {
+				bail: true,
+				errorMessage: errorMessages.auth.nameRequired,
 			},
 		},
-		["body"]
-	),
-	validateLogin: checkSchema(
-		{
-			email: {
-				notEmpty: {
-					bail: true,
-					errorMessage: "EMAIL_REQUIRED",
-				},
-				isEmail: {
-					bail: true,
-					errorMessage: "EMAIL_INVALID_FORMAT",
-				},
+		email: {
+			notEmpty: {
+				bail: true,
+				errorMessage: errorMessages.auth.emailRequired,
 			},
-			password: {
-				notEmpty: {
-					bail: true,
-					errorMessage: "PASSWORD_REQUIRED",
-				},
+			isEmail: {
+				bail: true,
+				errorMessage: errorMessages.auth.emailInvalidFormat,
+			},
+			custom: {
+				bail: true,
+				options: validateEmail.alreadyRegistered,
+				errorMessage: errorMessages.auth.emailAlreadyRegistered,
 			},
 		},
-		["body"]
-	),
+		password: {
+			notEmpty: {
+				bail: true,
+				errorMessage: errorMessages.auth.passwordRequired,
+			},
+			isLength: {
+				bail: true,
+				options: { min: 8 },
+				errorMessage: errorMessages.auth.passwordMinLength,
+			},
+		},
+		confirmPassword: {
+			notEmpty: {
+				bail: true,
+				errorMessage: errorMessages.auth.confirmPasswordRequired,
+			},
+			custom: {
+				bail: true,
+				options: validatePassword.confirmPasswordMismatch,
+				errorMessage: errorMessages.auth.confirmPasswordMismatch,
+			},
+		},
+	}),
+	validateLogin: checkSchema({
+		email: {
+			notEmpty: {
+				bail: true,
+				errorMessage: errorMessages.auth.emailRequired,
+			},
+			isEmail: {
+				bail: true,
+				errorMessage: errorMessages.auth.emailInvalidFormat,
+			},
+		},
+		password: {
+			notEmpty: {
+				bail: true,
+				errorMessage: errorMessages.auth.passwordRequired,
+			},
+		},
+	}),
 };

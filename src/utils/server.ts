@@ -8,6 +8,7 @@ import ticketRoutes from "../routes/ticketRoutes";
 import scheduleRoutes from "../routes/scheduleRoutes";
 import icarRoutes from "../routes/icarRoutes";
 import authRoutes from "../routes/authRoutes";
+import reviewRoutes from "../routes/reviewRoutes";
 import { setupSocketIO } from "./websocket";
 import { scheduleCron } from "./schedule_cron";
 
@@ -28,6 +29,7 @@ export const createServer = () => {
 	app.use("/api/schedules", scheduleRoutes);
 	app.use("/api/icars", icarRoutes);
 	app.use("/api/auth", authRoutes);
+	app.use("/api/reviews", reviewRoutes);
 
 	const httpServer = createHttpServer(app);
 	setupSocketIO(httpServer);

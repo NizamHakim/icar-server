@@ -13,22 +13,14 @@ import {
 import { Review } from "../types/review";
 
 export const ticketService = {
-	getTicketByStatus: async (userId: number, status: string) => {
-		return await ticketRepository.getUserTicketByStatus(
+	getClosestTicket: async (userId: number) => {
+		return await ticketRepository.getClosestTicket(userId);
+	},
+	getTicketsByStatus: async (userId: number, status: string) => {
+		return await ticketRepository.getTicketsByStatus(
 			userId,
 			status as TicketStatus
 		);
-	},
-	getClosestUserTicket: async (userId: number) => {
-		return await ticketRepository.getClosestUserTicket(userId);
-	},
-	getTicketById: async (ticketId: number) => {
-		const ticket = await ticketRepository.getTicketById(ticketId);
-		if (!ticket) {
-			throw new NotFoundError(errorMessages.ticket.notFound);
-		}
-
-		return ticket;
 	},
 	createTicket: async (userId: number, scheduleId: number) => {
 		const schedule = await scheduleRepository.getScheduleById(scheduleId);
@@ -48,32 +40,23 @@ export const ticketService = {
 
 		return ticket;
 	},
-	cancelTicket: async (ticketId: number) => {
+	updateTicketStatus: async (ticketId: number, status: TicketStatus) => {
 		const ticket = await ticketRepository.getTicketById(ticketId);
 		if (!ticket) {
 			throw new NotFoundError(errorMessages.ticket.notFound);
 		}
-		return await ticketRepository.updateTicketStatus(
-			ticketId,
-			TicketStatus.CANCELED
-		);
+		return await ticketRepository.updateTicketStatus(ticketId, status);
 	},
-	finishTicket: async (ticketId: number) => {
-		const ticket = await ticketRepository.getTicketById(ticketId);
-		if (!ticket) {
-			throw new NotFoundError(errorMessages.ticket.notFound);
-		}
-		return await ticketRepository.updateTicketStatus(
-			ticketId,
-			TicketStatus.FINISHED
-		);
+	updateReview: async (ticketId: number, review: Review) => {
+		return await ticketRepository.updateReview(ticketId, review);
 	},
-	distanceStatus: async (
+	getTicketsDistance: async (
 		userId: number,
 		icarId: number,
 		icarPosition: Coordinate
 	) => {
-		const tickets = await ticketRepository.getInqueueTicketsByIcarId(
+		const tickets = await ticketRepository.getTicketsByIcarId(
+			TicketStatus.IN_QUEUE,
 			userId,
 			icarId
 		);
@@ -98,12 +81,16 @@ export const ticketService = {
 
 		return await Promise.all(ticketsWithDistance);
 	},
-	getReviewAndSuggestionOptions: () => {
-		return {
-			reviewOptions: ticketRepository.getReviewOptions(),
-		};
+	// FALLBACK
+	getTickets: async (userId: number) => {
+		return await ticketRepository.getTickets(userId);
 	},
-	updateReview: async (ticketId: number, review: Review) => {
-		return await ticketRepository.updateReview(ticketId, review);
+	getTicketById: async (ticketId: number) => {
+		const ticket = await ticketRepository.getTicketById(ticketId);
+		if (!ticket) {
+			throw new NotFoundError(errorMessages.ticket.notFound);
+		}
+
+		return ticket;
 	},
 };

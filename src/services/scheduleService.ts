@@ -1,7 +1,8 @@
 import { scheduleRepository } from "../repositories/scheduleRepository";
 
 export const scheduleService = {
-	getScheduleListByStopAndRoute: async (
+	// USECASE
+	getSchedulesByStopAndRoute: async (
 		icarStopId: number,
 		icarRouteId: number
 	) => {
@@ -11,5 +12,9 @@ export const scheduleService = {
 		);
 
 		return scheduleList;
+	},
+	// FALLBACK
+	getSchedules: async () => {
+		return await scheduleRepository.getSchedules();
 	},
 };

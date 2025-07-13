@@ -14,6 +14,7 @@ const luxon_1 = require("luxon");
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 exports.scheduleRepository = {
+    // USECASE
     getScheduleListByStopAndRoute: (icarStopId, icarRouteId) => __awaiter(void 0, void 0, void 0, function* () {
         return yield prisma.schedule.findMany({
             where: {
@@ -38,6 +39,10 @@ exports.scheduleRepository = {
                 arrivalTime: "asc",
             },
         });
+    }),
+    // FALLBACK
+    getSchedules: () => __awaiter(void 0, void 0, void 0, function* () {
+        return yield prisma.schedule.findMany({});
     }),
     getScheduleById: (scheduleId) => __awaiter(void 0, void 0, void 0, function* () {
         return yield prisma.schedule.findUnique({

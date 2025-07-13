@@ -1,20 +1,15 @@
 import express from "express";
 import { icarController } from "../controllers/icarController";
 import { icarMiddleware } from "../middlewares/icarMiddleware";
-import { icarRouteMiddleware } from "../middlewares/icarRouteMiddleware";
 
 const router = express.Router();
 
-router.get(
-	"/icar-stop/:icarStopId",
-	icarMiddleware.validateGetIcarsWithScheduleByStopId,
-	icarController.getIcarsWithScheduleByStopId
-);
+router.get("/", icarMiddleware.validateGetIcars, icarController.getIcars);
 
-router.post(
-	"/verify-icar",
-	icarMiddleware.validateVerifyIcarId,
-	icarController.verifyIcarId
+router.get(
+	"/:icarId",
+	icarMiddleware.validateGetIcarById,
+	icarController.getIcarById
 );
 
 export default router;

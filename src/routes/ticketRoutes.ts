@@ -4,22 +4,23 @@ import { ticketMiddleware } from "../middlewares/ticketMiddleware";
 
 const router = express.Router();
 
-// /?userId=1status=IN_QUEUE
 router.get(
-	"/user/:userId/status/:status",
-	ticketMiddleware.validateGetTicketByStatus,
-	ticketController.getTicketByStatus
+	"/closest",
+	ticketMiddleware.validateGetClosestTicket,
+	ticketController.getClosestTicket
 );
 
-// /?userId=1status=IN_QUEUE&sortBy=arrivalTime&sortOrder=asc&limit=1
 router.get(
-	"/user/:userId/closest",
-	ticketMiddleware.validateGetClosestUserTicket,
-	ticketController.getClosestUserTicket
+	"/distance",
+	ticketMiddleware.validateGetTicketsDistance,
+	ticketController.getTicketsDistance
 );
 
-// review
-router.get("/review-options", ticketController.getReviewAndSuggestionOptions);
+router.get(
+	"/",
+	ticketMiddleware.validateGetTickets,
+	ticketController.getTickets
+);
 
 router.get(
 	"/:ticketId",
@@ -33,28 +34,10 @@ router.post(
 	ticketController.createTicket
 );
 
-router.post(
-	"/:ticketId/cancel",
-	ticketMiddleware.validateCancelTicket,
-	ticketController.cancelTicket
-);
-
-router.post(
-	"/:ticketId/finish",
-	ticketMiddleware.validateFinishTicket,
-	ticketController.finishTicket
-);
-
-router.post(
-	"/distance-status",
-	ticketMiddleware.validateDistanceStatus,
-	ticketController.distanceStatus
-);
-
-router.post(
-	"/:ticketId/review",
-	ticketMiddleware.validateUpdateReview,
-	ticketController.updateReview
+router.patch(
+	"/:ticketId",
+	ticketMiddleware.validateUpdateTicket,
+	ticketController.updateTicket
 );
 
 export default router;

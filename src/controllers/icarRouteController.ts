@@ -5,10 +5,18 @@ import { matchedData } from "express-validator";
 import { checkOrThrowValidationError } from "../errors/core/checkOrThrowValidationError";
 
 export const icarRouteController = {
-	getAllRoutes: async (req: Request, res: Response) => {
+	getRoutes: async (req: Request, res: Response) => {
 		try {
-			const routes = await icarRouteService.getAllRoutes();
+			checkOrThrowValidationError(req);
+			const data = matchedData(req);
 
+			if (data.polyline) {
+				const routes = await icarRouteService.getRoutesWithPolylines();
+				res.status(200).json(routes);
+				return;
+			}
+
+			const routes = await icarRouteService.getRoutes();
 			res.status(200).json(routes);
 		} catch (error) {
 			handleError(error, res);

@@ -7,5 +7,5 @@ const express_1 = __importDefault(require("express"));
 const scheduleController_1 = require("../controllers/scheduleController");
 const scheduleMiddleware_1 = require("../middlewares/scheduleMiddleware");
 const router = express_1.default.Router();
-router.get("/icar-stop/:icarStopId/icar-route/:icarRouteId", scheduleMiddleware_1.scheduleMiddleware.validateGetScheduleListByStopAndRoute, scheduleController_1.scheduleController.getScheduleListByStopAndRoute);
+router.get("/", scheduleMiddleware_1.scheduleMiddleware.validateGetSchedules, scheduleController_1.scheduleController.getSchedules);
 exports.default = router;

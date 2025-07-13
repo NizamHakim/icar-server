@@ -27,7 +27,7 @@ exports.userRepository = {
             },
         });
     }),
-    createNewUser: (name, email, password) => __awaiter(void 0, void 0, void 0, function* () {
+    createUser: (name, email, password) => __awaiter(void 0, void 0, void 0, function* () {
         return yield prisma.user.create({
             data: {
                 name: name,

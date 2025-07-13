@@ -5,8 +5,8 @@ import { osrmRepository } from "../repositories/osrmRepository";
 import { Coordinate } from "../types/coordinate";
 
 export const icarStopService = {
-	getAllStops: async (userPosition: Coordinate) => {
-		const icarStops = await icarStopRepository.getAllStops();
+	getStops: async (userPosition: Coordinate) => {
+		const icarStops = await icarStopRepository.getStops();
 
 		const icarStopsWithDistanceAndDuration = icarStops.map(async (icarStop) => {
 			const { distance, duration } =

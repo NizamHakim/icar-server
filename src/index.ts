@@ -1,11 +1,10 @@
 import dotenv from "dotenv";
-import { createServer } from "./utils/server";
-
 dotenv.config();
+import { createServer } from "./utils/server";
+import { config } from "../config/config";
 
 const app = createServer();
-const PORT = process.env.APP_PORT;
 
-app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(config.server.port, () => {
+	console.log(`Server is running on ${config.server.url}`);
 });

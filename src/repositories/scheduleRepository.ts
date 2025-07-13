@@ -3,6 +3,7 @@ import { IcarStatus, PrismaClient, TicketStatus } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const scheduleRepository = {
+	// USECASE
 	getScheduleListByStopAndRoute: async (
 		icarStopId: number,
 		icarRouteId: number
@@ -30,6 +31,10 @@ export const scheduleRepository = {
 				arrivalTime: "asc",
 			},
 		});
+	},
+	// FALLBACK
+	getSchedules: async () => {
+		return await prisma.schedule.findMany({});
 	},
 	getScheduleById: async (scheduleId: number) => {
 		return await prisma.schedule.findUnique({

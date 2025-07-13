@@ -13,7 +13,7 @@ exports.icarStopRepository = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 exports.icarStopRepository = {
-    getAllStops: () => __awaiter(void 0, void 0, void 0, function* () {
+    getStops: () => __awaiter(void 0, void 0, void 0, function* () {
         return yield prisma.icarStop.findMany();
     }),
     getStopById: (id) => __awaiter(void 0, void 0, void 0, function* () {

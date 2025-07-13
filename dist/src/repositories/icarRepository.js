@@ -13,6 +13,7 @@ exports.icarRepository = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 exports.icarRepository = {
+    // USE CASE
     getIcarsWithScheduleByStopId: (icarStopId) => __awaiter(void 0, void 0, void 0, function* () {
         const now = new Date();
         const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -32,15 +33,19 @@ exports.icarRepository = {
             },
         });
     }),
-    getIcarById: (icarId) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield prisma.icar.findUnique({
-            where: { id: icarId },
-        });
-    }),
     updateIcarStatus: (icarId, status) => __awaiter(void 0, void 0, void 0, function* () {
         return yield prisma.icar.update({
             where: { id: icarId },
             data: { status: status },
+        });
+    }),
+    // FALLBACK
+    getIcars: () => __awaiter(void 0, void 0, void 0, function* () {
+        return yield prisma.icar.findMany({});
+    }),
+    getIcarById: (icarId) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield prisma.icar.findUnique({
+            where: { id: icarId },
         });
     }),
 };

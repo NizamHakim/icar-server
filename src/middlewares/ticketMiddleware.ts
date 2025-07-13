@@ -1,134 +1,111 @@
 import { checkSchema } from "express-validator";
 import { errorMessages } from "../errors/core/errorMessages";
-import { TicketStatus } from "@prisma/client";
-import { Coordinate } from "../types/coordinate";
-import { Review } from "../types/review";
+import { validateAuthToken } from "./customValidators/validateAuthToken";
+import { validateTicket } from "./customValidators/validateTicket";
+import { validateIcar } from "./customValidators/validateIcar";
 
 export const ticketMiddleware = {
-	validateGetTicketByStatus: checkSchema(
-		{
-			userId: {
-				isInt: {
-					bail: true,
-					errorMessage: errorMessages.user.invalidId,
-				},
-			},
-			status: {
-				custom: {
-					bail: true,
-					options: async (value, { req }) => {
-						const validStatuses = Object.values(TicketStatus);
-						if (!validStatuses.includes(value as TicketStatus)) {
-							throw new Error(errorMessages.ticket.invalidStatus);
-						}
-
-						return true;
-					},
-					errorMessage: errorMessages.ticket.invalidStatus,
-				},
+	validateGetClosestTicket: checkSchema({
+		"x-auth-token": {
+			custom: {
+				bail: true,
+				options: validateAuthToken,
+				errorMessage: errorMessages.auth.invalidToken,
 			},
 		},
-		["params"]
-	),
-	validateGetClosestUserTicket: checkSchema(
-		{
-			userId: {
-				isInt: {
-					bail: true,
-					errorMessage: errorMessages.user.invalidId,
-				},
+	}),
+	validateGetTickets: checkSchema({
+		"x-auth-token": {
+			custom: {
+				bail: true,
+				options: validateAuthToken,
+				errorMessage: errorMessages.auth.invalidToken,
 			},
 		},
-		["params"]
-	),
-	validateGetTicketById: checkSchema(
-		{
-			ticketId: {
-				isInt: {
-					bail: true,
-					errorMessage: errorMessages.ticket.invalidId,
-				},
+		status: {
+			optional: true,
+			custom: {
+				bail: true,
+				options: validateTicket.validStatus,
+				errorMessage: errorMessages.ticket.invalidStatus,
 			},
 		},
-		["params"]
-	),
-	validateCreateTicket: checkSchema(
-		{
-			userId: {
-				isInt: {
-					bail: true,
-					errorMessage: errorMessages.user.invalidId,
-				},
-			},
-			scheduleId: {
-				isInt: {
-					bail: true,
-					errorMessage: errorMessages.schedule.invalidId,
-				},
+	}),
+	validateGetTicketById: checkSchema({
+		"x-auth-token": {
+			custom: {
+				bail: true,
+				options: validateAuthToken,
+				errorMessage: errorMessages.auth.invalidToken,
 			},
 		},
-		["body"]
-	),
-	validateCancelTicket: checkSchema(
-		{
-			ticketId: {
-				isInt: {
-					bail: true,
-					errorMessage: errorMessages.ticket.invalidId,
-				},
+		ticketId: {
+			isInt: {
+				bail: true,
+				errorMessage: errorMessages.ticket.invalidId,
 			},
 		},
-		["params"]
-	),
-	validateFinishTicket: checkSchema(
-		{
-			ticketId: {
-				isInt: {
-					bail: true,
-					errorMessage: errorMessages.ticket.invalidId,
-				},
+	}),
+	validateCreateTicket: checkSchema({
+		"x-auth-token": {
+			custom: {
+				bail: true,
+				options: validateAuthToken,
+				errorMessage: errorMessages.auth.invalidToken,
 			},
 		},
-		["params"]
-	),
-	validateDistanceStatus: checkSchema(
-		{
-			userId: {
-				isInt: {
-					bail: true,
-					errorMessage: errorMessages.user.invalidId,
-				},
-			},
-			icarId: {
-				isInt: {
-					bail: true,
-					errorMessage: errorMessages.icar.invalidId,
-				},
-			},
-			position: {
-				custom: {
-					bail: true,
-					options: async (value, { req }) => {
-						const icarPosition = value as Coordinate;
-
-						req.icar = { position: icarPosition };
-						return true;
-					},
-					errorMessage: errorMessages.icar.invalidPosition,
-				},
+		scheduleId: {
+			isInt: {
+				bail: true,
+				errorMessage: errorMessages.schedule.invalidId,
 			},
 		},
-		["body"]
-	),
-	validateUpdateReview: checkSchema(
-		{
-			ticketId: {
-				isInt: {
-					bail: true,
-					errorMessage: errorMessages.ticket.invalidId,
-				},
+	}),
+	validateUpdateTicket: checkSchema({
+		"x-auth-token": {
+			custom: {
+				bail: true,
+				options: validateAuthToken,
+				errorMessage: errorMessages.auth.invalidToken,
 			},
 		},
-		["params"]
-	),
+		ticketId: {
+			isInt: {
+				bail: true,
+				errorMessage: errorMessages.ticket.invalidId,
+			},
+		},
+		status: {
+			optional: true,
+			custom: {
+				bail: true,
+				options: validateTicket.validStatus,
+				errorMessage: errorMessages.ticket.invalidStatus,
+			},
+		},
+		review: {
+			optional: true,
+			custom: {
+				bail: true,
+				options: validateTicket.validReview,
+				errorMessage: errorMessages.ticket.invalidReview,
+			},
+		},
+	}),
+	validateGetTicketsDistance: checkSchema({
+		"x-auth-token": {
+			custom: {
+				bail: true,
+				options: validateAuthToken,
+				errorMessage: errorMessages.auth.invalidToken,
+			},
+		},
+		"x-icar": {
+			custom: {
+				bail: true,
+				options: validateIcar,
+				errorMessage: errorMessages.icar.invalidId,
+			},
+		},
+	}),
 };

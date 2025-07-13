@@ -13,6 +13,7 @@ const ticketRoutes_1 = __importDefault(require("../routes/ticketRoutes"));
 const scheduleRoutes_1 = __importDefault(require("../routes/scheduleRoutes"));
 const icarRoutes_1 = __importDefault(require("../routes/icarRoutes"));
 const authRoutes_1 = __importDefault(require("../routes/authRoutes"));
+const reviewRoutes_1 = __importDefault(require("../routes/reviewRoutes"));
 const websocket_1 = require("./websocket");
 const schedule_cron_1 = require("./schedule_cron");
 const createServer = () => {
@@ -28,6 +29,7 @@ const createServer = () => {
     app.use("/api/schedules", scheduleRoutes_1.default);
     app.use("/api/icars", icarRoutes_1.default);
     app.use("/api/auth", authRoutes_1.default);
+    app.use("/api/reviews", reviewRoutes_1.default);
     const httpServer = (0, http_1.createServer)(app);
     (0, websocket_1.setupSocketIO)(httpServer);
     (0, schedule_cron_1.scheduleCron)();

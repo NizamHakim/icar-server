@@ -11,7 +11,7 @@ export const userSeeder = async () => {
 			{
 				name: "Nizam Hakim",
 				email: "nizamhakim282@gmail.com",
-				password: await bcrypt.hash("08juli2003", SALT_ROUNDS),
+				password: await bcrypt.hash("00000000", SALT_ROUNDS),
 			},
 		],
 	});

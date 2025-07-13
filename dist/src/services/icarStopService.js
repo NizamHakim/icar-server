@@ -15,8 +15,8 @@ const NotFoundError_1 = require("../errors/NotFoundError");
 const icarStopRepository_1 = require("../repositories/icarStopRepository");
 const osrmRepository_1 = require("../repositories/osrmRepository");
 exports.icarStopService = {
-    getAllStops: (userPosition) => __awaiter(void 0, void 0, void 0, function* () {
-        const icarStops = yield icarStopRepository_1.icarStopRepository.getAllStops();
+    getStops: (userPosition) => __awaiter(void 0, void 0, void 0, function* () {
+        const icarStops = yield icarStopRepository_1.icarStopRepository.getStops();
         const icarStopsWithDistanceAndDuration = icarStops.map((icarStop) => __awaiter(void 0, void 0, void 0, function* () {
             const { distance, duration } = yield osrmRepository_1.osrmRepository.getDistanceAndDuration(userPosition, icarStop.coordinate);
             return Object.assign(Object.assign({}, icarStop), { distance,

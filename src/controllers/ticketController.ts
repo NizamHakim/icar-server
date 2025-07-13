@@ -6,29 +6,34 @@ import { handleError } from "../errors/core/handleError";
 import { Review } from "../types/review";
 
 export const ticketController = {
-	getTicketByStatus: async (req: Request, res: Response) => {
+	getClosestTicket: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
-			const data = matchedData(req);
-			const userId = parseInt(data.userId);
-			const status = data.status;
-			const tickets = await ticketService.getTicketByStatus(userId, status);
+			const userId = req.user!.id!;
+			const ticket = await ticketService.getClosestTicket(userId);
 
-			res.status(200).json(tickets);
+			res.status(200).json(ticket);
 		} catch (error) {
 			handleError(error, res);
 		}
 	},
-	getClosestUserTicket: async (req: Request, res: Response) => {
+	getTickets: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
 			const data = matchedData(req);
-			const userId = parseInt(data.userId);
-			const ticket = await ticketService.getClosestUserTicket(userId);
+			const userId = req.user!.id!;
 
-			res.status(200).json(ticket);
+			if (data.status) {
+				const status = data.status;
+				const tickets = await ticketService.getTicketsByStatus(userId, status);
+				res.status(200).json(tickets);
+				return;
+			}
+
+			const tickets = await ticketService.getTickets(userId);
+			res.status(200).json(tickets);
 		} catch (error) {
 			handleError(error, res);
 		}
@@ -50,8 +55,9 @@ export const ticketController = {
 		try {
 			checkOrThrowValidationError(req);
 
+			const userId = req.user!.id!;
+
 			const data = matchedData(req);
-			const userId = parseInt(data.userId);
 			const scheduleId = parseInt(data.scheduleId);
 			const ticket = await ticketService.createTicket(userId, scheduleId);
 
@@ -60,71 +66,43 @@ export const ticketController = {
 			handleError(error, res);
 		}
 	},
-	cancelTicket: async (req: Request, res: Response) => {
+	updateTicket: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
 			const data = matchedData(req);
 			const ticketId = parseInt(data.ticketId);
-			const updatedTicket = await ticketService.cancelTicket(ticketId);
 
-			res.status(200).json(updatedTicket);
+			if (data.status) {
+				const status = data.status;
+				const ticket = await ticketService.updateTicketStatus(ticketId, status);
+				res.status(200).json(ticket);
+				return;
+			} else if (data.review) {
+				const review = data.review as Review;
+				const ticket = await ticketService.updateReview(ticketId, review);
+				res.status(200).json(ticket);
+				return;
+			}
 		} catch (error) {
 			handleError(error, res);
 		}
 	},
-	finishTicket: async (req: Request, res: Response) => {
+	getTicketsDistance: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
-			const data = matchedData(req);
-			const ticketId = parseInt(data.ticketId);
-			const updatedTicket = await ticketService.finishTicket(ticketId);
+			const userId = req.user!.id!;
+			const icarId = req.icar!.id!;
+			const icarPosition = req.icar!.position!;
 
-			res.status(200).json(updatedTicket);
-		} catch (error) {
-			handleError(error, res);
-		}
-	},
-	distanceStatus: async (req: Request, res: Response) => {
-		try {
-			checkOrThrowValidationError(req);
-
-			const data = matchedData(req);
-			const userId = parseInt(data.userId);
-			const icarId = parseInt(data.icarId);
-			const position = req.icar!.position!;
-
-			const distanceStatusList = await ticketService.distanceStatus(
+			const distanceStatusList = await ticketService.getTicketsDistance(
 				userId,
 				icarId,
-				position
+				icarPosition
 			);
 
 			res.status(200).json(distanceStatusList);
-		} catch (error) {
-			handleError(error, res);
-		}
-	},
-	getReviewAndSuggestionOptions: (req: Request, res: Response) => {
-		try {
-			const reviewOptions = ticketService.getReviewAndSuggestionOptions();
-
-			res.status(200).json(reviewOptions);
-		} catch (error) {
-			handleError(error, res);
-		}
-	},
-	updateReview: async (req: Request, res: Response) => {
-		try {
-			checkOrThrowValidationError(req);
-
-			const data = matchedData(req);
-			const ticketId = parseInt(data.ticketId);
-			const review = req.body as Review;
-			const updatedTicket = await ticketService.updateReview(ticketId, review);
-
-			res.status(200).json(updatedTicket);
 		} catch (error) {
 			handleError(error, res);
 		}

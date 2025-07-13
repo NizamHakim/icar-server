@@ -1,8 +1,5 @@
-import {
-	PrismaClient,
-	RouteStopWaypoint,
-	ScheduleSession,
-} from "@prisma/client";
+import { config } from "../../config/config";
+import { PrismaClient, ScheduleSession } from "@prisma/client";
 import { DateTime } from "luxon";
 import { BadGatewayError } from "../../src/errors/BadGatewayError";
 import { Coordinate } from "../../src/types/coordinate";
@@ -135,9 +132,8 @@ async function generateSchedule(
 		});
 
 		const stopMinutes = 1;
-
 		const response = await fetch(
-			`${process.env.OSRM_URL}/${
+			`${config.osrm.url}/${
 				(routeStopWaypoint[idx % mod]!.icarStop.coordinate as Coordinate)
 					.longitude
 			},${

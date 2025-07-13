@@ -7,6 +7,6 @@ const express_1 = __importDefault(require("express"));
 const icarController_1 = require("../controllers/icarController");
 const icarMiddleware_1 = require("../middlewares/icarMiddleware");
 const router = express_1.default.Router();
-router.get("/icar-stop/:icarStopId", icarMiddleware_1.icarMiddleware.validateGetIcarsWithScheduleByStopId, icarController_1.icarController.getIcarsWithScheduleByStopId);
-router.post("/verify-icar", icarMiddleware_1.icarMiddleware.validateVerifyIcarId, icarController_1.icarController.verifyIcarId);
+router.get("/", icarMiddleware_1.icarMiddleware.validateGetIcars, icarController_1.icarController.getIcars);
+router.get("/:icarId", icarMiddleware_1.icarMiddleware.validateGetIcarById, icarController_1.icarController.getIcarById);
 exports.default = router;

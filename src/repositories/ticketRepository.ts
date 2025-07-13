@@ -3,32 +3,7 @@ import { Review } from "../types/review";
 const prisma = new PrismaClient();
 
 export const ticketRepository = {
-	getUserTicketByStatus: async (userId: number, status: TicketStatus) => {
-		return await prisma.ticket.findMany({
-			where: {
-				userId: userId,
-				status: status,
-			},
-			include: {
-				schedule: {
-					include: {
-						icarStop: true,
-						icar: {
-							include: {
-								icarRoute: true,
-							},
-						},
-					},
-				},
-			},
-			orderBy: {
-				schedule: {
-					arrivalTime: "desc",
-				},
-			},
-		});
-	},
-	getClosestUserTicket: async (userId: number) => {
+	getClosestTicket: async (userId: number) => {
 		return await prisma.ticket.findFirst({
 			where: {
 				userId: userId,
@@ -49,6 +24,31 @@ export const ticketRepository = {
 			orderBy: {
 				schedule: {
 					arrivalTime: "asc",
+				},
+			},
+		});
+	},
+	getTicketsByStatus: async (userId: number, status: TicketStatus) => {
+		return await prisma.ticket.findMany({
+			where: {
+				userId: userId,
+				status: status,
+			},
+			include: {
+				schedule: {
+					include: {
+						icarStop: true,
+						icar: {
+							include: {
+								icarRoute: true,
+							},
+						},
+					},
+				},
+			},
+			orderBy: {
+				schedule: {
+					arrivalTime: "desc",
 				},
 			},
 		});
@@ -97,11 +97,25 @@ export const ticketRepository = {
 			},
 		});
 	},
-	getInqueueTicketsByIcarId: async (userId: number, icarId: number) => {
+	updateReview: async (ticketId: number, review: Review) => {
+		return await prisma.ticket.update({
+			where: {
+				id: ticketId,
+			},
+			data: {
+				review: review,
+			},
+		});
+	},
+	getTicketsByIcarId: async (
+		status: TicketStatus,
+		userId: number,
+		icarId: number
+	) => {
 		return await prisma.ticket.findMany({
 			where: {
 				userId: userId,
-				status: TicketStatus.IN_QUEUE,
+				status: status,
 				schedule: {
 					icarId: icarId,
 				},
@@ -115,71 +129,6 @@ export const ticketRepository = {
 			},
 		});
 	},
-	getReviewOptions: () => {
-		return {
-			1: [
-				"PUNCTUALITY",
-				"TRAVEL_SAFETY",
-				"COMFORT",
-				"CLEANLINESS",
-				"TRAVEL_SPEED",
-				"APPLICATION_SERVICE",
-				"NUMBER_OF_SEATS",
-				"TRAVEL_ROUTE",
-				"NUMBER_OF_STOPS",
-			],
-			2: [
-				"PUNCTUALITY",
-				"TRAVEL_SAFETY",
-				"COMFORT",
-				"CLEANLINESS",
-				"TRAVEL_SPEED",
-				"APPLICATION_SERVICE",
-				"NUMBER_OF_SEATS",
-				"TRAVEL_ROUTE",
-				"NUMBER_OF_STOPS",
-			],
-			3: [
-				"PUNCTUALITY",
-				"TRAVEL_SAFETY",
-				"COMFORT",
-				"CLEANLINESS",
-				"TRAVEL_SPEED",
-				"APPLICATION_SERVICE",
-				"NUMBER_OF_SEATS",
-				"TRAVEL_ROUTE",
-				"NUMBER_OF_STOPS",
-			],
-			4: [
-				"PUNCTUALITY",
-				"TRAVEL_SAFETY",
-				"COMFORT",
-				"CLEANLINESS",
-				"TRAVEL_SPEED",
-				"APPLICATION_SERVICE",
-				"NUMBER_OF_SEATS",
-				"TRAVEL_ROUTE",
-				"NUMBER_OF_STOPS",
-			],
-			5: [
-				"PUNCTUALITY",
-				"TRAVEL_SAFETY",
-				"COMFORT",
-				"CLEANLINESS",
-				"APPLICATION_SERVICE",
-			],
-		};
-	},
-	updateReview: async (ticketId: number, review: Review) => {
-		return await prisma.ticket.update({
-			where: {
-				id: ticketId,
-			},
-			data: {
-				review: review,
-			},
-		});
-	},
 	cancelTicketsByIcarId: async (icarId: number) => {
 		return await prisma.ticket.updateMany({
 			where: {
@@ -190,6 +139,14 @@ export const ticketRepository = {
 			},
 			data: {
 				status: TicketStatus.CANCELED,
+			},
+		});
+	},
+	// FALLBACK
+	getTickets: async (userId: number) => {
+		return await prisma.ticket.findMany({
+			where: {
+				userId: userId,
 			},
 		});
 	},

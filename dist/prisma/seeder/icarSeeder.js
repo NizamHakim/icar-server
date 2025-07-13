@@ -16,14 +16,8 @@ const icarSeeder = () => __awaiter(void 0, void 0, void 0, function* () {
     const bunderanAsrama = yield prisma.icarRoute.findUnique({
         where: { name: "Bunderan ITS - Asrama ITS" },
     });
-    const gerbangITS = yield prisma.icarStop.findUnique({
-        where: { name: "Gerbang ITS" },
-    });
     const kantinRobotika = yield prisma.icarRoute.findUnique({
         where: { name: "Kantin ITS - Robotika" },
-    });
-    const kantinPusat = yield prisma.icarStop.findUnique({
-        where: { name: "Kantin Pusat ITS" },
     });
     yield prisma.icar.createMany({
         data: [

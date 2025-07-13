@@ -13,32 +13,7 @@ exports.ticketRepository = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 exports.ticketRepository = {
-    getUserTicketByStatus: (userId, status) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield prisma.ticket.findMany({
-            where: {
-                userId: userId,
-                status: status,
-            },
-            include: {
-                schedule: {
-                    include: {
-                        icarStop: true,
-                        icar: {
-                            include: {
-                                icarRoute: true,
-                            },
-                        },
-                    },
-                },
-            },
-            orderBy: {
-                schedule: {
-                    arrivalTime: "desc",
-                },
-            },
-        });
-    }),
-    getClosestUserTicket: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    getClosestTicket: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         return yield prisma.ticket.findFirst({
             where: {
                 userId: userId,
@@ -59,6 +34,31 @@ exports.ticketRepository = {
             orderBy: {
                 schedule: {
                     arrivalTime: "asc",
+                },
+            },
+        });
+    }),
+    getTicketsByStatus: (userId, status) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield prisma.ticket.findMany({
+            where: {
+                userId: userId,
+                status: status,
+            },
+            include: {
+                schedule: {
+                    include: {
+                        icarStop: true,
+                        icar: {
+                            include: {
+                                icarRoute: true,
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                schedule: {
+                    arrivalTime: "desc",
                 },
             },
         });
@@ -107,11 +107,21 @@ exports.ticketRepository = {
             },
         });
     }),
-    getInqueueTicketsByIcarId: (userId, icarId) => __awaiter(void 0, void 0, void 0, function* () {
+    updateReview: (ticketId, review) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield prisma.ticket.update({
+            where: {
+                id: ticketId,
+            },
+            data: {
+                review: review,
+            },
+        });
+    }),
+    getTicketsByIcarId: (status, userId, icarId) => __awaiter(void 0, void 0, void 0, function* () {
         return yield prisma.ticket.findMany({
             where: {
                 userId: userId,
-                status: client_1.TicketStatus.IN_QUEUE,
+                status: status,
                 schedule: {
                     icarId: icarId,
                 },
@@ -125,71 +135,6 @@ exports.ticketRepository = {
             },
         });
     }),
-    getReviewOptions: () => {
-        return {
-            1: [
-                "PUNCTUALITY",
-                "TRAVEL_SAFETY",
-                "COMFORT",
-                "CLEANLINESS",
-                "TRAVEL_SPEED",
-                "APPLICATION_SERVICE",
-                "NUMBER_OF_SEATS",
-                "TRAVEL_ROUTE",
-                "NUMBER_OF_STOPS",
-            ],
-            2: [
-                "PUNCTUALITY",
-                "TRAVEL_SAFETY",
-                "COMFORT",
-                "CLEANLINESS",
-                "TRAVEL_SPEED",
-                "APPLICATION_SERVICE",
-                "NUMBER_OF_SEATS",
-                "TRAVEL_ROUTE",
-                "NUMBER_OF_STOPS",
-            ],
-            3: [
-                "PUNCTUALITY",
-                "TRAVEL_SAFETY",
-                "COMFORT",
-                "CLEANLINESS",
-                "TRAVEL_SPEED",
-                "APPLICATION_SERVICE",
-                "NUMBER_OF_SEATS",
-                "TRAVEL_ROUTE",
-                "NUMBER_OF_STOPS",
-            ],
-            4: [
-                "PUNCTUALITY",
-                "TRAVEL_SAFETY",
-                "COMFORT",
-                "CLEANLINESS",
-                "TRAVEL_SPEED",
-                "APPLICATION_SERVICE",
-                "NUMBER_OF_SEATS",
-                "TRAVEL_ROUTE",
-                "NUMBER_OF_STOPS",
-            ],
-            5: [
-                "PUNCTUALITY",
-                "TRAVEL_SAFETY",
-                "COMFORT",
-                "CLEANLINESS",
-                "APPLICATION_SERVICE",
-            ],
-        };
-    },
-    updateReview: (ticketId, review) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield prisma.ticket.update({
-            where: {
-                id: ticketId,
-            },
-            data: {
-                review: review,
-            },
-        });
-    }),
     cancelTicketsByIcarId: (icarId) => __awaiter(void 0, void 0, void 0, function* () {
         return yield prisma.ticket.updateMany({
             where: {
@@ -200,6 +145,14 @@ exports.ticketRepository = {
             },
             data: {
                 status: client_1.TicketStatus.CANCELED,
+            },
+        });
+    }),
+    // FALLBACK
+    getTickets: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield prisma.ticket.findMany({
+            where: {
+                userId: userId,
             },
         });
     }),

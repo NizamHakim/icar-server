@@ -13,8 +13,9 @@ exports.icarRouteService = void 0;
 const icarRouteRepository_1 = require("../repositories/icarRouteRepository");
 const osrmRepository_1 = require("../repositories/osrmRepository");
 exports.icarRouteService = {
-    getAllRoutes: () => __awaiter(void 0, void 0, void 0, function* () {
-        const routes = yield icarRouteRepository_1.icarRouteRepository.getAllRoutes();
+    // USECASE
+    getRoutesWithPolylines: () => __awaiter(void 0, void 0, void 0, function* () {
+        const routes = yield icarRouteRepository_1.icarRouteRepository.getRoutes();
         const routesWithPolyline = routes.map((route) => __awaiter(void 0, void 0, void 0, function* () {
             const coordinates = route.routeStopWaypoints.map((wp) => {
                 return wp.icarStop.coordinate;
@@ -23,6 +24,10 @@ exports.icarRouteService = {
             return Object.assign(Object.assign({}, route), { polylinePoints });
         }));
         return yield Promise.all(routesWithPolyline);
+    }),
+    // FALLBACK
+    getRoutes: () => __awaiter(void 0, void 0, void 0, function* () {
+        return yield icarRouteRepository_1.icarRouteRepository.getRoutes();
     }),
     getRouteById: (icarRouteId) => __awaiter(void 0, void 0, void 0, function* () {
         return yield icarRouteRepository_1.icarRouteRepository.getRouteById(icarRouteId);

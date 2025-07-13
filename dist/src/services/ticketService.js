@@ -19,18 +19,11 @@ const errorMessages_1 = require("../errors/core/errorMessages");
 const osrmRepository_1 = require("../repositories/osrmRepository");
 const ticketDistanceStatus_1 = require("../types/ticketDistanceStatus");
 exports.ticketService = {
-    getTicketByStatus: (userId, status) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield ticketRepository_1.ticketRepository.getUserTicketByStatus(userId, status);
+    getClosestTicket: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield ticketRepository_1.ticketRepository.getClosestTicket(userId);
     }),
-    getClosestUserTicket: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield ticketRepository_1.ticketRepository.getClosestUserTicket(userId);
-    }),
-    getTicketById: (ticketId) => __awaiter(void 0, void 0, void 0, function* () {
-        const ticket = yield ticketRepository_1.ticketRepository.getTicketById(ticketId);
-        if (!ticket) {
-            throw new NotFoundError_1.NotFoundError(errorMessages_1.errorMessages.ticket.notFound);
-        }
-        return ticket;
+    getTicketsByStatus: (userId, status) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield ticketRepository_1.ticketRepository.getTicketsByStatus(userId, status);
     }),
     createTicket: (userId, scheduleId) => __awaiter(void 0, void 0, void 0, function* () {
         const schedule = yield scheduleRepository_1.scheduleRepository.getScheduleById(scheduleId);
@@ -43,24 +36,20 @@ exports.ticketService = {
         const ticket = yield ticketRepository_1.ticketRepository.createTicket(userId, scheduleId, expiredAt.toJSDate());
         return ticket;
     }),
-    cancelTicket: (ticketId) => __awaiter(void 0, void 0, void 0, function* () {
+    updateTicketStatus: (ticketId, status) => __awaiter(void 0, void 0, void 0, function* () {
         const ticket = yield ticketRepository_1.ticketRepository.getTicketById(ticketId);
         if (!ticket) {
             throw new NotFoundError_1.NotFoundError(errorMessages_1.errorMessages.ticket.notFound);
         }
-        return yield ticketRepository_1.ticketRepository.updateTicketStatus(ticketId, client_1.TicketStatus.CANCELED);
+        return yield ticketRepository_1.ticketRepository.updateTicketStatus(ticketId, status);
     }),
-    finishTicket: (ticketId) => __awaiter(void 0, void 0, void 0, function* () {
-        const ticket = yield ticketRepository_1.ticketRepository.getTicketById(ticketId);
-        if (!ticket) {
-            throw new NotFoundError_1.NotFoundError(errorMessages_1.errorMessages.ticket.notFound);
-        }
-        return yield ticketRepository_1.ticketRepository.updateTicketStatus(ticketId, client_1.TicketStatus.FINISHED);
+    updateReview: (ticketId, review) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield ticketRepository_1.ticketRepository.updateReview(ticketId, review);
     }),
-    distanceStatus: (userId, icarId, icarPosition) => __awaiter(void 0, void 0, void 0, function* () {
-        const tickets = yield ticketRepository_1.ticketRepository.getInqueueTicketsByIcarId(userId, icarId);
+    getTicketsDistance: (userId, icarId, icarPosition) => __awaiter(void 0, void 0, void 0, function* () {
+        const tickets = yield ticketRepository_1.ticketRepository.getTicketsByIcarId(client_1.TicketStatus.IN_QUEUE, userId, icarId);
         const ticketsWithDistance = tickets.map((ticket) => __awaiter(void 0, void 0, void 0, function* () {
-            const { distance } = yield osrmRepository_1.osrmRepository.getDistanceAndDuration(ticket.schedule.icarStop.coordinate, icarPosition);
+            const { distance } = yield osrmRepository_1.osrmRepository.getDistanceAndDuration(icarPosition, ticket.schedule.icarStop.coordinate);
             const distanceStatus = (0, ticketDistanceStatus_1.getTicketDistanceStatus)(distance);
             if (distanceStatus == ticketDistanceStatus_1.TicketDistanceStatus.ARRIVED) {
                 ticketRepository_1.ticketRepository.updateTicketStatus(ticket.id, client_1.TicketStatus.FINISHED);
@@ -72,12 +61,15 @@ exports.ticketService = {
         }));
         return yield Promise.all(ticketsWithDistance);
     }),
-    getReviewAndSuggestionOptions: () => {
-        return {
-            reviewOptions: ticketRepository_1.ticketRepository.getReviewOptions(),
-        };
-    },
-    updateReview: (ticketId, review) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield ticketRepository_1.ticketRepository.updateReview(ticketId, review);
+    // FALLBACK
+    getTickets: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield ticketRepository_1.ticketRepository.getTickets(userId);
+    }),
+    getTicketById: (ticketId) => __awaiter(void 0, void 0, void 0, function* () {
+        const ticket = yield ticketRepository_1.ticketRepository.getTicketById(ticketId);
+        if (!ticket) {
+            throw new NotFoundError_1.NotFoundError(errorMessages_1.errorMessages.ticket.notFound);
+        }
+        return ticket;
     }),
 };

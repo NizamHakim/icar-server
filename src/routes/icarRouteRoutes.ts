@@ -4,7 +4,11 @@ import { icarRouteMiddleware } from "../middlewares/icarRouteMiddleware";
 
 const router = express.Router();
 
-router.get("/", icarRouteController.getAllRoutes);
+router.get(
+	"/",
+	icarRouteMiddleware.validateGetRoutes,
+	icarRouteController.getRoutes
+);
 
 router.get(
 	"/:icarRouteId",

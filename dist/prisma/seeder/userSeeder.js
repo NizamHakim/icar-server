@@ -23,7 +23,7 @@ const userSeeder = () => __awaiter(void 0, void 0, void 0, function* () {
             {
                 name: "Nizam Hakim",
                 email: "nizamhakim282@gmail.com",
-                password: yield bcrypt_1.default.hash("08juli2003", SALT_ROUNDS),
+                password: yield bcrypt_1.default.hash("00000000", SALT_ROUNDS),
             },
         ],
     });

@@ -1,3 +1,4 @@
+import { config } from "../../config/config";
 import { BadGatewayError } from "../errors/BadGatewayError";
 import { errorMessages } from "../errors/core/errorMessages";
 import { Coordinate } from "../types/coordinate";
@@ -6,7 +7,7 @@ export const osrmRepository = {
 	getPolyline: async (waypoints: Array<Coordinate>) => {
 		const closedWaypoints = [...waypoints, waypoints[0]];
 
-		const url = `${process.env.OSRM_URL}/${closedWaypoints
+		const url = `${config.osrm.url}/${closedWaypoints
 			.map((waypoint) => `${waypoint.longitude},${waypoint.latitude}`)
 			.join(";")}?geometries=geojson`;
 
@@ -38,7 +39,7 @@ export const osrmRepository = {
 		fromCoordinate: Coordinate,
 		toCoordinate: Coordinate
 	) => {
-		const url = `${process.env.OSRM_URL}/${fromCoordinate.longitude},${fromCoordinate.latitude};${toCoordinate.longitude},${toCoordinate.latitude}`;
+		const url = `${config.osrm.url}/${fromCoordinate.longitude},${fromCoordinate.latitude};${toCoordinate.longitude},${toCoordinate.latitude}`;
 
 		const response = await fetch(url, {
 			method: "GET",

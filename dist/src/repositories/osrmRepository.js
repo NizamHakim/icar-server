@@ -36,8 +36,8 @@ exports.osrmRepository = {
             };
         });
     }),
-    getDistanceAndDuration: (coordinateA, coordinateB) => __awaiter(void 0, void 0, void 0, function* () {
-        const url = `${process.env.OSRM_URL}/${coordinateA.longitude},${coordinateA.latitude};${coordinateB.longitude},${coordinateB.latitude}`;
+    getDistanceAndDuration: (fromCoordinate, toCoordinate) => __awaiter(void 0, void 0, void 0, function* () {
+        const url = `${process.env.OSRM_URL}/${fromCoordinate.longitude},${fromCoordinate.latitude};${toCoordinate.longitude},${toCoordinate.latitude}`;
         const response = yield fetch(url, {
             method: "GET",
             headers: {

@@ -5,15 +5,9 @@ export const icarSeeder = async () => {
 	const bunderanAsrama = await prisma.icarRoute.findUnique({
 		where: { name: "Bunderan ITS - Asrama ITS" },
 	});
-	const gerbangITS = await prisma.icarStop.findUnique({
-		where: { name: "Gerbang ITS" },
-	});
 
 	const kantinRobotika = await prisma.icarRoute.findUnique({
 		where: { name: "Kantin ITS - Robotika" },
-	});
-	const kantinPusat = await prisma.icarStop.findUnique({
-		where: { name: "Kantin Pusat ITS" },
 	});
 
 	await prisma.icar.createMany({

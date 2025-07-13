@@ -13,7 +13,7 @@ exports.icarRouteRepository = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 exports.icarRouteRepository = {
-    getAllRoutes: () => __awaiter(void 0, void 0, void 0, function* () {
+    getRoutes: () => __awaiter(void 0, void 0, void 0, function* () {
         return yield prisma.icarRoute.findMany({
             include: {
                 icars: true,

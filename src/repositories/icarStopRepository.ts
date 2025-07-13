@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const icarStopRepository = {
-	getAllStops: async () => {
+	getStops: async () => {
 		return await prisma.icarStop.findMany();
 	},
 	getStopById: async (id: number) => {

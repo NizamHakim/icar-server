@@ -15,11 +15,11 @@ const handleError_1 = require("../errors/core/handleError");
 const checkOrThrowValidationError_1 = require("../errors/core/checkOrThrowValidationError");
 const express_validator_1 = require("express-validator");
 exports.icarStopController = {
-    getAllStops: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    getStops: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
             const userPosition = req.user.position;
-            const icarStops = yield icarStopService_1.icarStopService.getAllStops(userPosition);
+            const icarStops = yield icarStopService_1.icarStopService.getStops(userPosition);
             res.status(200).json(icarStops);
         }
         catch (error) {

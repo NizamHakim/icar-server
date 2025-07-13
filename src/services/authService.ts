@@ -14,7 +14,10 @@ export const authService = {
 			throw new UnauthorizedError(errorMessages.auth.userNotFound);
 		}
 
-		return user;
+		return {
+			...user,
+			token: jwtUtils.signToken(user),
+		};
 	},
 	login: async (email: string, password: string) => {
 		const user = await userRepository.getUserByEmail(email);
@@ -34,21 +37,17 @@ export const authService = {
 		}
 
 		return {
-			user: user,
+			...user,
 			token: jwtUtils.signToken(user),
 		};
 	},
 	signup: async (name: string, email: string, password: string) => {
 		const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-		const newUser = await userRepository.createNewUser(
-			name,
-			email,
-			hashedPassword
-		);
+		const user = await userRepository.createUser(name, email, hashedPassword);
 
 		return {
-			user: newUser,
-			token: jwtUtils.signToken(newUser),
+			...user,
+			token: jwtUtils.signToken(user),
 		};
 	},
 	logout: () => {},

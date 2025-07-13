@@ -1,58 +1,45 @@
 import { checkSchema } from "express-validator";
 import { errorMessages } from "../errors/core/errorMessages";
-import { Coordinate } from "../types/coordinate";
+import { validateUserPosition } from "./customValidators/validateUserPosition";
+import { validateAuthToken } from "./customValidators/validateAuthToken";
 
 export const icarStopMiddleware = {
-	validateGetAllStops: checkSchema(
-		{
-			userPosition: {
-				custom: {
-					bail: true,
-					options: async (value, { req }) => {
-						const userPosition = _parseUserPosition(value);
-
-						req.user = { position: userPosition };
-						return true;
-					},
-					errorMessage: errorMessages.user.invalidPosition,
-				},
+	validateGetStops: checkSchema({
+		"x-auth-token": {
+			custom: {
+				bail: true,
+				options: validateAuthToken,
+				errorMessage: errorMessages.auth.invalidToken,
 			},
 		},
-		["params"]
-	),
+		"x-user-position": {
+			custom: {
+				bail: true,
+				options: validateUserPosition,
+				errorMessage: errorMessages.user.invalidPosition,
+			},
+		},
+	}),
 	validateGetStopById: checkSchema({
+		"x-auth-token": {
+			custom: {
+				bail: true,
+				options: validateAuthToken,
+				errorMessage: errorMessages.auth.invalidToken,
+			},
+		},
+		"x-user-position": {
+			custom: {
+				bail: true,
+				options: validateUserPosition,
+				errorMessage: errorMessages.user.invalidPosition,
+			},
+		},
 		icarStopId: {
 			isInt: {
 				bail: true,
 				errorMessage: errorMessages.icarStop.invalidId,
 			},
 		},
-		userPosition: {
-			custom: {
-				bail: true,
-				options: async (value, { req }) => {
-					const userPosition = _parseUserPosition(value);
-
-					req.user = { position: userPosition };
-					return true;
-				},
-				errorMessage: errorMessages.user.invalidPosition,
-			},
-		},
 	}),
 };
-
-function _parseUserPosition(userPositionStr: string): Coordinate {
-	const [latitudeStr, longitudeStr] = userPositionStr.split(",");
-	const latitude = parseFloat(latitudeStr);
-	const longitude = parseFloat(longitudeStr);
-
-	if (isNaN(latitude) || isNaN(longitude)) {
-		throw new Error(errorMessages.user.invalidPosition);
-	}
-
-	return {
-		latitude: latitude,
-		longitude: longitude,
-	};
-}

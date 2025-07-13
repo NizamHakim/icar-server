@@ -15,9 +15,16 @@ const handleError_1 = require("../errors/core/handleError");
 const express_validator_1 = require("express-validator");
 const checkOrThrowValidationError_1 = require("../errors/core/checkOrThrowValidationError");
 exports.icarRouteController = {
-    getAllRoutes: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    getRoutes: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const routes = yield icarRouteService_1.icarRouteService.getAllRoutes();
+            (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
+            const data = (0, express_validator_1.matchedData)(req);
+            if (data.polyline) {
+                const routes = yield icarRouteService_1.icarRouteService.getRoutesWithPolylines();
+                res.status(200).json(routes);
+                return;
+            }
+            const routes = yield icarRouteService_1.icarRouteService.getRoutes();
             res.status(200).json(routes);
         }
         catch (error) {

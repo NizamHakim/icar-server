@@ -15,24 +15,29 @@ const handleError_1 = require("../errors/core/handleError");
 const checkOrThrowValidationError_1 = require("../errors/core/checkOrThrowValidationError");
 const express_validator_1 = require("express-validator");
 exports.icarController = {
-    getIcarsWithScheduleByStopId: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    getIcars: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
             const data = (0, express_validator_1.matchedData)(req);
-            const icarStopId = parseInt(data.icarStopId);
-            const icars = yield icarService_1.icarService.getIcarsWithScheduleByStopId(icarStopId);
+            if (data.icarStop) {
+                const icarStopId = parseInt(data.icarStop);
+                const icars = yield icarService_1.icarService.getIcarsWithScheduleByStopId(icarStopId);
+                res.status(200).json(icars);
+                return;
+            }
+            const icars = yield icarService_1.icarService.getIcars();
             res.status(200).json(icars);
         }
         catch (error) {
             (0, handleError_1.handleError)(error, res);
         }
     }),
-    verifyIcarId: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    getIcarById: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
             const data = (0, express_validator_1.matchedData)(req);
             const icarId = parseInt(data.icarId);
-            const icar = yield icarService_1.icarService.verifyIcarId(icarId);
+            const icar = yield icarService_1.icarService.getIcarById(icarId);
             res.status(200).json(icar);
         }
         catch (error) {

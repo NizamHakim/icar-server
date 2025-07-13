@@ -7,6 +7,6 @@ const express_1 = __importDefault(require("express"));
 const icarStopController_1 = require("../controllers/icarStopController");
 const icarStopMiddleware_1 = require("../middlewares/icarStopMiddleware");
 const router = express_1.default.Router();
-router.get("/:userPosition", icarStopMiddleware_1.icarStopMiddleware.validateGetAllStops, icarStopController_1.icarStopController.getAllStops);
-router.get("/:userPosition/:icarStopId", icarStopMiddleware_1.icarStopMiddleware.validateGetStopById, icarStopController_1.icarStopController.getStopById);
+router.get("/", icarStopMiddleware_1.icarStopMiddleware.validateGetStops, icarStopController_1.icarStopController.getStops);
+router.get("/:icarStopId", icarStopMiddleware_1.icarStopMiddleware.validateGetStopById, icarStopController_1.icarStopController.getStopById);
 exports.default = router;

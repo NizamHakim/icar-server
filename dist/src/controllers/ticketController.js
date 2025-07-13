@@ -15,26 +15,30 @@ const express_validator_1 = require("express-validator");
 const checkOrThrowValidationError_1 = require("../errors/core/checkOrThrowValidationError");
 const handleError_1 = require("../errors/core/handleError");
 exports.ticketController = {
-    getTicketByStatus: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    getClosestTicket: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
-            const data = (0, express_validator_1.matchedData)(req);
-            const userId = parseInt(data.userId);
-            const status = data.status;
-            const tickets = yield ticketService_1.ticketService.getTicketByStatus(userId, status);
-            res.status(200).json(tickets);
+            const userId = req.user.id;
+            const ticket = yield ticketService_1.ticketService.getClosestTicket(userId);
+            res.status(200).json(ticket);
         }
         catch (error) {
             (0, handleError_1.handleError)(error, res);
         }
     }),
-    getClosestUserTicket: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    getTickets: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
             const data = (0, express_validator_1.matchedData)(req);
-            const userId = parseInt(data.userId);
-            const ticket = yield ticketService_1.ticketService.getClosestUserTicket(userId);
-            res.status(200).json(ticket);
+            const userId = req.user.id;
+            if (data.status) {
+                const status = data.status;
+                const tickets = yield ticketService_1.ticketService.getTicketsByStatus(userId, status);
+                res.status(200).json(tickets);
+                return;
+            }
+            const tickets = yield ticketService_1.ticketService.getTickets(userId);
+            res.status(200).json(tickets);
         }
         catch (error) {
             (0, handleError_1.handleError)(error, res);
@@ -55,8 +59,8 @@ exports.ticketController = {
     createTicket: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
+            const userId = req.user.id;
             const data = (0, express_validator_1.matchedData)(req);
-            const userId = parseInt(data.userId);
             const scheduleId = parseInt(data.scheduleId);
             const ticket = yield ticketService_1.ticketService.createTicket(userId, scheduleId);
             res.status(201).json(ticket);
@@ -65,61 +69,36 @@ exports.ticketController = {
             (0, handleError_1.handleError)(error, res);
         }
     }),
-    cancelTicket: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    updateTicket: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
             const data = (0, express_validator_1.matchedData)(req);
             const ticketId = parseInt(data.ticketId);
-            const updatedTicket = yield ticketService_1.ticketService.cancelTicket(ticketId);
-            res.status(200).json(updatedTicket);
+            if (data.status) {
+                const status = data.status;
+                const ticket = yield ticketService_1.ticketService.updateTicketStatus(ticketId, status);
+                res.status(200).json(ticket);
+                return;
+            }
+            else if (data.review) {
+                const review = data.review;
+                const ticket = yield ticketService_1.ticketService.updateReview(ticketId, review);
+                res.status(200).json(ticket);
+                return;
+            }
         }
         catch (error) {
             (0, handleError_1.handleError)(error, res);
         }
     }),
-    finishTicket: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    getTicketsDistance: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
-            const data = (0, express_validator_1.matchedData)(req);
-            const ticketId = parseInt(data.ticketId);
-            const updatedTicket = yield ticketService_1.ticketService.finishTicket(ticketId);
-            res.status(200).json(updatedTicket);
-        }
-        catch (error) {
-            (0, handleError_1.handleError)(error, res);
-        }
-    }),
-    distanceStatus: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
-            const data = (0, express_validator_1.matchedData)(req);
-            const userId = parseInt(data.userId);
-            const icarId = parseInt(data.icarId);
-            const position = req.icar.position;
-            const distanceStatusList = yield ticketService_1.ticketService.distanceStatus(userId, icarId, position);
+            const userId = req.user.id;
+            const icarId = req.icar.id;
+            const icarPosition = req.icar.position;
+            const distanceStatusList = yield ticketService_1.ticketService.getTicketsDistance(userId, icarId, icarPosition);
             res.status(200).json(distanceStatusList);
-        }
-        catch (error) {
-            (0, handleError_1.handleError)(error, res);
-        }
-    }),
-    getReviewAndSuggestionOptions: (req, res) => {
-        try {
-            const reviewOptions = ticketService_1.ticketService.getReviewAndSuggestionOptions();
-            res.status(200).json(reviewOptions);
-        }
-        catch (error) {
-            (0, handleError_1.handleError)(error, res);
-        }
-    },
-    updateReview: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
-            const data = (0, express_validator_1.matchedData)(req);
-            const ticketId = parseInt(data.ticketId);
-            const review = req.body;
-            const updatedTicket = yield ticketService_1.ticketService.updateReview(ticketId, review);
-            res.status(200).json(updatedTicket);
         }
         catch (error) {
             (0, handleError_1.handleError)(error, res);

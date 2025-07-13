@@ -5,12 +5,12 @@ import { checkOrThrowValidationError } from "../errors/core/checkOrThrowValidati
 import { matchedData } from "express-validator";
 
 export const icarStopController = {
-	getAllStops: async (req: Request, res: Response) => {
+	getStops: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
 			const userPosition = req.user!.position!;
-			const icarStops = await icarStopService.getAllStops(userPosition);
+			const icarStops = await icarStopService.getStops(userPosition);
 
 			res.status(200).json(icarStops);
 		} catch (error) {

@@ -1,107 +1,82 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
 const express_validator_1 = require("express-validator");
-const userRepository_1 = require("../repositories/userRepository");
-const jwt_1 = require("../utils/jwt");
+const validateAuthToken_1 = require("./customValidators/validateAuthToken");
+const errorMessages_1 = require("../errors/core/errorMessages");
+const validateEmail_1 = require("./customValidators/validateEmail");
+const validatePassword_1 = require("./customValidators/validatePassword");
 exports.authMiddleware = {
     validateToken: (0, express_validator_1.checkSchema)({
         "x-auth-token": {
             custom: {
                 bail: true,
-                options: (value_1, _a) => __awaiter(void 0, [value_1, _a], void 0, function* (value, { req }) {
-                    const decodedToken = jwt_1.jwtUtils.verifyToken(value);
-                    if (!decodedToken.userId) {
-                        throw new Error("INVALID_TOKEN");
-                    }
-                    req.user = { id: decodedToken.userId };
-                    return true;
-                }),
-                errorMessage: "INVALID_TOKEN",
+                options: validateAuthToken_1.validateAuthToken,
+                errorMessage: errorMessages_1.errorMessages.auth.invalidToken,
             },
         },
-    }, ["headers"]),
+    }),
     validateSignup: (0, express_validator_1.checkSchema)({
         name: {
             notEmpty: {
                 bail: true,
-                errorMessage: "NAME_REQUIRED",
+                errorMessage: errorMessages_1.errorMessages.auth.nameRequired,
             },
         },
         email: {
             notEmpty: {
                 bail: true,
-                errorMessage: "EMAIL_REQUIRED",
+                errorMessage: errorMessages_1.errorMessages.auth.emailRequired,
             },
             isEmail: {
                 bail: true,
-                errorMessage: "EMAIL_INVALID_FORMAT",
+                errorMessage: errorMessages_1.errorMessages.auth.emailInvalidFormat,
             },
             custom: {
                 bail: true,
-                options: (value_1, _a) => __awaiter(void 0, [value_1, _a], void 0, function* (value, { req }) {
-                    const user = yield userRepository_1.userRepository.getUserByEmail(value);
-                    if (user) {
-                        throw new Error("EMAIL_ALREADY_REGISTERED");
-                    }
-                    return true;
-                }),
-                errorMessage: "EMAIL_ALREADY_REGISTERED",
+                options: validateEmail_1.validateEmail.alreadyRegistered,
+                errorMessage: errorMessages_1.errorMessages.auth.emailAlreadyRegistered,
             },
         },
         password: {
             notEmpty: {
                 bail: true,
-                errorMessage: "PASSWORD_REQUIRED",
+                errorMessage: errorMessages_1.errorMessages.auth.passwordRequired,
             },
             isLength: {
                 bail: true,
                 options: { min: 8 },
-                errorMessage: "PASSWORD_MIN_LENGTH",
+                errorMessage: errorMessages_1.errorMessages.auth.passwordMinLength,
             },
         },
         confirmPassword: {
             notEmpty: {
                 bail: true,
-                errorMessage: "CONFIRM_PASSWORD_REQUIRED",
+                errorMessage: errorMessages_1.errorMessages.auth.confirmPasswordRequired,
             },
             custom: {
                 bail: true,
-                options: (value, { req }) => {
-                    if (value !== req.body.password) {
-                        throw new Error("CONFIRM_PASSWORD_MISMATCH");
-                    }
-                    return true;
-                },
-                errorMessage: "CONFIRM_PASSWORD_MISMATCH",
+                options: validatePassword_1.validatePassword.confirmPasswordMismatch,
+                errorMessage: errorMessages_1.errorMessages.auth.confirmPasswordMismatch,
             },
         },
-    }, ["body"]),
+    }),
     validateLogin: (0, express_validator_1.checkSchema)({
         email: {
             notEmpty: {
                 bail: true,
-                errorMessage: "EMAIL_REQUIRED",
+                errorMessage: errorMessages_1.errorMessages.auth.emailRequired,
             },
             isEmail: {
                 bail: true,
-                errorMessage: "EMAIL_INVALID_FORMAT",
+                errorMessage: errorMessages_1.errorMessages.auth.emailInvalidFormat,
             },
         },
         password: {
             notEmpty: {
                 bail: true,
-                errorMessage: "PASSWORD_REQUIRED",
+                errorMessage: errorMessages_1.errorMessages.auth.passwordRequired,
             },
         },
-    }, ["body"]),
+    }),
 };

@@ -7,6 +7,6 @@ const express_1 = __importDefault(require("express"));
 const icarRouteController_1 = require("../controllers/icarRouteController");
 const icarRouteMiddleware_1 = require("../middlewares/icarRouteMiddleware");
 const router = express_1.default.Router();
-router.get("/", icarRouteController_1.icarRouteController.getAllRoutes);
+router.get("/", icarRouteMiddleware_1.icarRouteMiddleware.validateGetRoutes, icarRouteController_1.icarRouteController.getRoutes);
 router.get("/:icarRouteId", icarRouteMiddleware_1.icarRouteMiddleware.validateGetRouteById, icarRouteController_1.icarRouteController.getRouteById);
 exports.default = router;

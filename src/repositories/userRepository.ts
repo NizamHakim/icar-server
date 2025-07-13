@@ -17,7 +17,7 @@ export const userRepository = {
 			},
 		});
 	},
-	createNewUser: async (name: string, email: string, password: string) => {
+	createUser: async (name: string, email: string, password: string) => {
 		return await prisma.user.create({
 			data: {
 				name: name,

@@ -15,14 +15,19 @@ const handleError_1 = require("../errors/core/handleError");
 const checkOrThrowValidationError_1 = require("../errors/core/checkOrThrowValidationError");
 const express_validator_1 = require("express-validator");
 exports.scheduleController = {
-    getScheduleListByStopAndRoute: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    getSchedules: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
             const data = (0, express_validator_1.matchedData)(req);
-            const icarStopId = parseInt(data.icarStopId);
-            const icarRouteId = parseInt(data.icarRouteId);
-            const scheduleList = yield scheduleService_1.scheduleService.getScheduleListByStopAndRoute(icarStopId, icarRouteId);
-            res.status(200).json(scheduleList);
+            if (data.icarStopId && data.icarRouteId) {
+                const icarStopId = parseInt(data.icarStopId);
+                const icarRouteId = parseInt(data.icarRouteId);
+                const schedules = yield scheduleService_1.scheduleService.getSchedulesByStopAndRoute(icarStopId, icarRouteId);
+                res.status(200).json(schedules);
+                return;
+            }
+            const schedules = yield scheduleService_1.scheduleService.getSchedules();
+            res.status(200).json(schedules);
         }
         catch (error) {
             (0, handleError_1.handleError)(error, res);

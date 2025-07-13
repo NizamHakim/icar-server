@@ -3,8 +3,9 @@ import { osrmRepository } from "../repositories/osrmRepository";
 import { Coordinate } from "../types/coordinate";
 
 export const icarRouteService = {
-	getAllRoutes: async () => {
-		const routes = await icarRouteRepository.getAllRoutes();
+	// USECASE
+	getRoutesWithPolylines: async () => {
+		const routes = await icarRouteRepository.getRoutes();
 
 		const routesWithPolyline = routes.map(async (route) => {
 			const coordinates = route.routeStopWaypoints.map((wp) => {
@@ -19,6 +20,10 @@ export const icarRouteService = {
 			};
 		});
 		return await Promise.all(routesWithPolyline);
+	},
+	// FALLBACK
+	getRoutes: async () => {
+		return await icarRouteRepository.getRoutes();
 	},
 	getRouteById: async (icarRouteId: number) => {
 		return await icarRouteRepository.getRouteById(icarRouteId);

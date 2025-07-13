@@ -5,12 +5,12 @@ import { icarStopMiddleware } from "../middlewares/icarStopMiddleware";
 const router = express.Router();
 
 router.get(
-	"/:userPosition",
-	icarStopMiddleware.validateGetAllStops,
-	icarStopController.getAllStops
+	"/",
+	icarStopMiddleware.validateGetStops,
+	icarStopController.getStops
 );
 router.get(
-	"/:userPosition/:icarStopId",
+	"/:icarStopId",
 	icarStopMiddleware.validateGetStopById,
 	icarStopController.getStopById
 );
