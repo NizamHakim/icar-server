@@ -13,7 +13,7 @@ exports.icarMiddleware = {
                 errorMessage: errorMessages_1.errorMessages.auth.invalidToken,
             },
         },
-        icarStop: {
+        icarStopId: {
             optional: true,
             isInt: {
                 bail: true,

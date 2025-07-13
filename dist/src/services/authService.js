@@ -19,14 +19,14 @@ const UnauthorizedError_1 = require("../errors/UnauthorizedError");
 const jwt_1 = require("../utils/jwt");
 const errorMessages_1 = require("../errors/core/errorMessages");
 const UnprocessableEntityError_1 = require("../errors/UnprocessableEntityError");
-const SALT_ROUNDS = 10;
+const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || "10");
 exports.authService = {
     getUserData: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield userRepository_1.userRepository.getUserById(userId);
         if (!user) {
             throw new UnauthorizedError_1.UnauthorizedError(errorMessages_1.errorMessages.auth.userNotFound);
         }
-        return user;
+        return Object.assign(Object.assign({}, user), { token: jwt_1.jwtUtils.signToken(user) });
     }),
     login: (email, password) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield userRepository_1.userRepository.getUserByEmail(email);
@@ -43,18 +43,12 @@ exports.authService = {
                 email: errorMessages_1.errorMessages.auth.emailPasswordCombinationInvalid,
             });
         }
-        return {
-            user: user,
-            token: jwt_1.jwtUtils.signToken(user),
-        };
+        return Object.assign(Object.assign({}, user), { token: jwt_1.jwtUtils.signToken(user) });
     }),
     signup: (name, email, password) => __awaiter(void 0, void 0, void 0, function* () {
         const hashedPassword = yield bcrypt_1.default.hash(password, SALT_ROUNDS);
-        const newUser = yield userRepository_1.userRepository.createUser(name, email, hashedPassword);
-        return {
-            user: newUser,
-            token: jwt_1.jwtUtils.signToken(newUser),
-        };
+        const user = yield userRepository_1.userRepository.createUser(name, email, hashedPassword);
+        return Object.assign(Object.assign({}, user), { token: jwt_1.jwtUtils.signToken(user) });
     }),
     logout: () => { },
 };

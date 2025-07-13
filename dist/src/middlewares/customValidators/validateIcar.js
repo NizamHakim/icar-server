@@ -13,12 +13,12 @@ exports.validateIcar = validateIcar;
 const coordinate_1 = require("../../types/coordinate");
 function validateIcar(value_1, _a) {
     return __awaiter(this, arguments, void 0, function* (value, { req }) {
-        const icar = JSON.parse(value);
+        const icar = typeof value === "string" ? JSON.parse(value) : value;
         const icarId = parseInt(icar.id);
         if (isNaN(icarId)) {
             throw new Error();
         }
-        const icarPosition = (0, coordinate_1.parseCoordinate)(value);
+        const icarPosition = (0, coordinate_1.parseCoordinate)(icar.position);
         req.icar = { id: icarId, position: icarPosition };
         return true;
     });

@@ -19,8 +19,8 @@ exports.icarController = {
         try {
             (0, checkOrThrowValidationError_1.checkOrThrowValidationError)(req);
             const data = (0, express_validator_1.matchedData)(req);
-            if (data.icarStop) {
-                const icarStopId = parseInt(data.icarStop);
+            if (data.icarStopId) {
+                const icarStopId = parseInt(data.icarStopId);
                 const icars = yield icarService_1.icarService.getIcarsWithScheduleByStopId(icarStopId);
                 res.status(200).json(icars);
                 return;
