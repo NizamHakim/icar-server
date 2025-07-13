@@ -6,16 +6,9 @@ export const config = {
 		url: appUrl(),
 	},
 	database: {
-		host: process.env.MYSQLHOST,
-		port: parseInt(process.env.MYSQLPORT!),
-		user: process.env.MYSQLUSER,
-		password: process.env.MYSQLPASSWORD,
-		name: process.env.MYSQLDATABASE,
 		url: process.env.MYSQL_URL,
 	},
 	osrm: {
-		host: process.env.OSRM_HOST,
-		port: parseInt(process.env.OSRM_PORT!),
 		url: process.env.OSRM_URL,
 	},
 	security: {
