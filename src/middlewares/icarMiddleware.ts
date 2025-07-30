@@ -4,13 +4,6 @@ import { validateAuthToken } from "./customValidators/validateAuthToken";
 
 export const icarMiddleware = {
 	validateGetIcars: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
 		icarStopId: {
 			optional: true,
 			isInt: {
