@@ -5,6 +5,41 @@ export const icarStopSeeder = async () => {
 	await prisma.icarStop.createMany({
 		data: [
 			{
+				name: "Gedung Pusat Robotika ITS",
+				coordinate: {
+					latitude: -7.278068,
+					longitude: 112.797312,
+				},
+			},
+			{
+				name: "Perumdos Blok U Timur",
+				coordinate: {
+					latitude: -7.283802,
+					longitude: 112.799395,
+				},
+			},
+			{
+				name: "Danau 8",
+				coordinate: {
+					latitude: -7.286039,
+					longitude: 112.796072,
+				},
+			},
+			{
+				name: "Asrama ITS",
+				coordinate: {
+					latitude: -7.288667,
+					longitude: 112.792659,
+				},
+			},
+			{
+				name: "Masjid Manarul Ilmi",
+				coordinate: {
+					latitude: -7.283841,
+					longitude: 112.793146,
+				},
+			},
+			{
 				name: "Gerbang ITS",
 				coordinate: {
 					latitude: -7.280328,
@@ -33,20 +68,6 @@ export const icarStopSeeder = async () => {
 				},
 			},
 			{
-				name: "Asrama ITS",
-				coordinate: {
-					latitude: -7.288667,
-					longitude: 112.792659,
-				},
-			},
-			{
-				name: "Masjid Manarul Ilmi",
-				coordinate: {
-					latitude: -7.283841,
-					longitude: 112.793146,
-				},
-			},
-			{
 				name: "Tower 2",
 				coordinate: {
 					latitude: -7.286007,
@@ -65,27 +86,6 @@ export const icarStopSeeder = async () => {
 				coordinate: {
 					latitude: -7.280722,
 					longitude: 112.797747,
-				},
-			},
-			{
-				name: "Gedung Pusat Robotika ITS",
-				coordinate: {
-					latitude: -7.278068,
-					longitude: 112.797312,
-				},
-			},
-			{
-				name: "Perumdos Blok U Timur",
-				coordinate: {
-					latitude: -7.283802,
-					longitude: 112.799395,
-				},
-			},
-			{
-				name: "Danau 8",
-				coordinate: {
-					latitude: -7.286039,
-					longitude: 112.796072,
 				},
 			},
 		],
