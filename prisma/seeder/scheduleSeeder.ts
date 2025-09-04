@@ -4,6 +4,7 @@ import { PrismaClient, ScheduleSession } from "@prisma/client";
 import { DateTime } from "luxon";
 import { BadGatewayError } from "../../src/errors/BadGatewayError";
 import { Coordinate } from "../../src/types/coordinate";
+import { datetime } from "../../src/utils/datetime";
 
 const prisma = new PrismaClient();
 
@@ -127,7 +128,7 @@ async function generateSchedule(
 			data: {
 				icarId: icarId,
 				icarStopId: routeStopWaypoint[idx % mod]!.icarStopId,
-				arrivalTime: current.toJSDate(),
+				arrivalTime: datetime.dateToTime(current.toJSDate()),
 				session: session,
 			},
 		});

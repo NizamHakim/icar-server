@@ -86,6 +86,7 @@ enum TicketStatus {
 
 model Ticket {
   id         Int          @id @default(autoincrement())
+  arrivedAt  DateTime
   expiredAt  DateTime
   status     TicketStatus @default(IN_QUEUE)
   userId     Int

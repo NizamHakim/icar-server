@@ -22,9 +22,7 @@ export const ticketRepository = {
 				},
 			},
 			orderBy: {
-				schedule: {
-					arrivalTime: "asc",
-				},
+				arrivedAt: "asc",
 			},
 		});
 	},
@@ -47,9 +45,7 @@ export const ticketRepository = {
 				},
 			},
 			orderBy: {
-				schedule: {
-					arrivalTime: "desc",
-				},
+				arrivedAt: "asc",
 			},
 		});
 	},
@@ -67,22 +63,23 @@ export const ticketRepository = {
 								icarRoute: true,
 							},
 						},
-						tickets: {
-							where: {
-								status: TicketStatus.IN_QUEUE,
-							},
-						},
 					},
 				},
 			},
 		});
 	},
-	createTicket: async (userId: number, scheduleId: number, expiredAt: Date) => {
+	createTicket: async (
+		userId: number,
+		scheduleId: number,
+		arrivedAt: Date,
+		expiredAt: Date
+	) => {
 		return await prisma.ticket.create({
 			data: {
 				userId: userId,
 				scheduleId: scheduleId,
 				status: TicketStatus.IN_QUEUE,
+				arrivedAt: arrivedAt,
 				expiredAt: expiredAt,
 			},
 		});
@@ -139,6 +136,14 @@ export const ticketRepository = {
 			},
 			data: {
 				status: TicketStatus.CANCELED,
+			},
+		});
+	},
+	ticketCountByArrivedAt: async (arrivedAt: Date) => {
+		return await prisma.ticket.count({
+			where: {
+				arrivedAt: arrivedAt,
+				status: TicketStatus.IN_QUEUE,
 			},
 		});
 	},

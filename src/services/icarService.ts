@@ -3,16 +3,30 @@ import { errorMessages } from "../errors/core/errorMessages";
 import { icarRepository } from "../repositories/icarRepository";
 import { ticketRepository } from "../repositories/ticketRepository";
 import { NotFoundError } from "../errors/NotFoundError";
+import { schedule } from "node-cron";
+import { datetime } from "../utils/datetime";
 
 export const icarService = {
 	// USE CASE
 	getIcarsWithScheduleByStopId: async (icarStopId: number) => {
-		const icarList = await icarRepository.getIcarsWithScheduleByStopId(
+		let icarList = await icarRepository.getIcarsWithScheduleByStopId(
 			icarStopId
 		);
-		return icarList.filter((icar) => {
+
+		icarList = icarList.filter((icar) => {
 			return icar.schedules.length > 0;
 		});
+
+		icarList.forEach((icar) => {
+			icar.schedules = icar.schedules.map((schedule) => {
+				return {
+					...schedule,
+					arrivalTime: datetime.timeToDate(schedule.arrivalTime),
+				};
+			});
+		});
+
+		return icarList;
 	},
 	connectIcar: async (icarIdStr: string) => {
 		const icarId = parseInt(icarIdStr);

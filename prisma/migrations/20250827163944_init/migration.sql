@@ -65,6 +65,7 @@ CREATE TABLE `User` (
 -- CreateTable
 CREATE TABLE `Ticket` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `arrivedAt` DATETIME(3) NOT NULL,
     `expiredAt` DATETIME(3) NOT NULL,
     `status` ENUM('FINISHED', 'CANCELED', 'IN_QUEUE') NOT NULL DEFAULT 'IN_QUEUE',
     `userId` INTEGER NOT NULL,

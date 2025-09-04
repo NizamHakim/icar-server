@@ -33,7 +33,7 @@ export const createServer = () => {
 
 	const httpServer = createHttpServer(app);
 	setupSocketIO(httpServer);
-	scheduleCron();
+	// scheduleCron();
 
 	return httpServer;
 };

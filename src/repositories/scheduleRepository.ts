@@ -1,5 +1,5 @@
-import { DateTime } from "luxon";
 import { IcarStatus, PrismaClient, TicketStatus } from "@prisma/client";
+import { datetime } from "../utils/datetime";
 const prisma = new PrismaClient();
 
 export const scheduleRepository = {
@@ -16,16 +16,16 @@ export const scheduleRepository = {
 					icarRouteId: icarRouteId,
 				},
 				arrivalTime: {
-					gte: DateTime.now().toJSDate(),
+					gte: datetime.dateToTime(new Date()),
 				},
 			},
 			include: {
-				icar: true,
-				tickets: {
-					where: {
-						status: TicketStatus.IN_QUEUE,
+				icar: {
+					include: {
+						icarRoute: true,
 					},
 				},
+				icarStop: true,
 			},
 			orderBy: {
 				arrivalTime: "asc",

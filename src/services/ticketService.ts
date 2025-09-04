@@ -11,6 +11,7 @@ import {
 	TicketDistanceStatus,
 } from "../types/ticketDistanceStatus";
 import { Review } from "../types/review";
+import { datetime } from "../utils/datetime";
 
 export const ticketService = {
 	getClosestTicket: async (userId: number) => {
@@ -28,14 +29,18 @@ export const ticketService = {
 			throw new NotFoundError(errorMessages.schedule.notFound);
 		}
 
-		const expiredAt = DateTime.fromJSDate(schedule.arrivalTime).plus({
-			minutes: 5,
-		});
+		const arrivedAt = datetime.timeToDate(schedule.arrivalTime);
+		const expiredAt = DateTime.fromJSDate(arrivedAt)
+			.plus({
+				minutes: 5,
+			})
+			.toJSDate();
 
 		const ticket = await ticketRepository.createTicket(
 			userId,
 			scheduleId,
-			expiredAt.toJSDate()
+			arrivedAt,
+			expiredAt
 		);
 
 		return ticket;
@@ -91,6 +96,16 @@ export const ticketService = {
 			throw new NotFoundError(errorMessages.ticket.notFound);
 		}
 
-		return ticket;
+		const ticketCounts = await ticketRepository.ticketCountByArrivedAt(
+			ticket.arrivedAt
+		);
+
+		return {
+			...ticket,
+			schedule: {
+				...ticket.schedule,
+				ticketCount: ticketCounts,
+			},
+		};
 	},
 };
