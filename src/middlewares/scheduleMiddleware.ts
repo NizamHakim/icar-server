@@ -1,29 +1,23 @@
 import { checkSchema } from "express-validator";
-import { errorMessages } from "../errors/core/errorMessages";
-import { validateAuthToken } from "./customValidators/validateAuthToken";
+import { messagesUtils } from "../utils/messagesUtils";
 
 export const scheduleMiddleware = {
 	validateGetSchedules: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
 		icarStopId: {
 			optional: true,
 			isInt: {
 				bail: true,
-				errorMessage: errorMessages.icarStop.invalidId,
+				errorMessage: messagesUtils.error.icarStop.invalidId,
 			},
+			toInt: true,
 		},
 		icarRouteId: {
 			optional: true,
 			isInt: {
 				bail: true,
-				errorMessage: errorMessages.icarRoute.invalidId,
+				errorMessage: messagesUtils.error.icarRoute.invalidId,
 			},
+			toInt: true,
 		},
 	}),
 };

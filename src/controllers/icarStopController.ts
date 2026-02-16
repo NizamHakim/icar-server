@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { icarStopService } from "../services/icarStopService";
-import { handleError } from "../errors/core/handleError";
-import { checkOrThrowValidationError } from "../errors/core/checkOrThrowValidationError";
+import { checkOrThrowValidationError } from "../middlewares/checkOrThrowValidationError";
 import { matchedData } from "express-validator";
+import { handleResponse } from "../utils/handleResponse";
 
 export const icarStopController = {
 	getStops: async (req: Request, res: Response) => {
@@ -10,19 +10,26 @@ export const icarStopController = {
 			checkOrThrowValidationError(req);
 
 			const userPosition = req.user!.position!;
+
 			const icarStops = await icarStopService.getStops(userPosition);
 
-			res.status(200).json(icarStops);
+			handleResponse({
+				res: res,
+				statusCode: 200,
+				data: icarStops
+			});
 		} catch (error) {
-			handleError(error, res);
+			handleResponse({
+				res: res,
+				error: error,
+			});
 		}
 	},
 	getStopById: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
-			const data = matchedData(req);
-			const icarStopId = parseInt(data.icarStopId);
+			const { icarStopId } = matchedData(req);
 			const userPosition = req.user!.position!;
 
 			const icarStop = await icarStopService.getStopById(
@@ -30,9 +37,16 @@ export const icarStopController = {
 				userPosition
 			);
 
-			res.status(200).json(icarStop);
+			handleResponse({
+				res: res,
+				statusCode: 200,
+				data: icarStop
+			});
 		} catch (error) {
-			handleError(error, res);
+			handleResponse({
+				res: res,
+				error: error,
+			});
 		}
 	},
 };

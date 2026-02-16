@@ -1,37 +1,24 @@
 import { checkSchema } from "express-validator";
-import { errorMessages } from "../errors/core/errorMessages";
-import { validateAuthToken } from "./customValidators/validateAuthToken";
+import { messagesUtils } from "../utils/messagesUtils";
 
 export const icarRouteMiddleware = {
 	validateGetRoutes: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
 		polyline: {
 			optional: true,
 			isBoolean: {
 				bail: true,
-				errorMessage: errorMessages.icarRoute.invalidPolyline,
+				errorMessage: messagesUtils.error.icarRoute.invalidPolyline,
 			},
+			toBoolean: true,
 		},
 	}),
 	validateGetRouteById: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
 		icarRouteId: {
 			isInt: {
 				bail: true,
-				errorMessage: errorMessages.icarRoute.invalidId,
+				errorMessage: messagesUtils.error.icarRoute.invalidId,
 			},
+			toInt: true,
 		},
 	}),
 };

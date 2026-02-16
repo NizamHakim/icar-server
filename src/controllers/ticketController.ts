@@ -1,110 +1,123 @@
 import { Request, Response } from "express";
 import { ticketService } from "../services/ticketService";
 import { matchedData } from "express-validator";
-import { checkOrThrowValidationError } from "../errors/core/checkOrThrowValidationError";
-import { handleError } from "../errors/core/handleError";
-import { Review } from "../types/review";
+import { checkOrThrowValidationError } from "../middlewares/checkOrThrowValidationError";
+import { handleResponse } from "../utils/handleResponse";
+import { messagesUtils } from "../utils/messagesUtils";
 
 export const ticketController = {
-	getClosestTicket: async (req: Request, res: Response) => {
-		try {
-			checkOrThrowValidationError(req);
+  getTickets: async (req: Request, res: Response) => {
+    try {
+      checkOrThrowValidationError(req);
 
-			const userId = req.user!.id!;
-			const ticket = await ticketService.getClosestTicket(userId);
+      const { status } = matchedData(req);
+      const userId = req.user!.id!;
 
-			res.status(200).json(ticket);
-		} catch (error) {
-			handleError(error, res);
-		}
-	},
-	getTickets: async (req: Request, res: Response) => {
-		try {
-			checkOrThrowValidationError(req);
+      const tickets = await ticketService.getTickets({
+        userId: userId,
+        status: status,
+      });
 
-			const data = matchedData(req);
-			const userId = req.user!.id!;
+      handleResponse({
+        res: res,
+        statusCode: 200,
+        data: tickets,
+      });
+    } catch (error) {
+      handleResponse({
+        res: res,
+        error: error,
+      });
+    }
+  },
+  getTicketById: async (req: Request, res: Response) => {
+    try {
+      checkOrThrowValidationError(req);
 
-			if (data.status) {
-				const status = data.status;
-				const tickets = await ticketService.getTicketsByStatus(userId, status);
-				res.status(200).json(tickets);
-				return;
-			}
+      const { ticketId } = matchedData(req);
+      const ticket = await ticketService.getTicketById(ticketId);
 
-			const tickets = await ticketService.getTickets(userId);
-			res.status(200).json(tickets);
-		} catch (error) {
-			handleError(error, res);
-		}
-	},
-	getTicketById: async (req: Request, res: Response) => {
-		try {
-			checkOrThrowValidationError(req);
+      handleResponse({
+        res: res,
+        statusCode: 200,
+        data: ticket,
+      });
+    } catch (error) {
+      handleResponse({
+        res: res,
+        error: error,
+      });
+    }
+  },
+  createTicket: async (req: Request, res: Response) => {
+    try {
+      checkOrThrowValidationError(req);
 
-			const data = matchedData(req);
-			const ticketId = parseInt(data.ticketId);
-			const ticket = await ticketService.getTicketById(ticketId);
+      const userId = req.user!.id!;
 
-			res.status(200).json(ticket);
-		} catch (error) {
-			handleError(error, res);
-		}
-	},
-	createTicket: async (req: Request, res: Response) => {
-		try {
-			checkOrThrowValidationError(req);
+      const { scheduleId } = matchedData(req);
+      const ticket = await ticketService.createTicket(userId, scheduleId);
 
-			const userId = req.user!.id!;
+      handleResponse({
+        res: res,
+        statusCode: 201,
+        message: messagesUtils.success.ticketCreated,
+        data: ticket,
+      });
+    } catch (error) {
+      handleResponse({
+        res: res,
+        error: error,
+      });
+    }
+  },
+  updateTicket: async (req: Request, res: Response) => {
+    try {
+      checkOrThrowValidationError(req);
 
-			const data = matchedData(req);
-			const scheduleId = parseInt(data.scheduleId);
-			const ticket = await ticketService.createTicket(userId, scheduleId);
+      const { ticketId, status, review } = matchedData(req);
 
-			res.status(201).json(ticket);
-		} catch (error) {
-			handleError(error, res);
-		}
-	},
-	updateTicket: async (req: Request, res: Response) => {
-		try {
-			checkOrThrowValidationError(req);
+      let ticket, message;
+      if (status !== undefined) {
+        ticket = await ticketService.updateTicketStatus(ticketId, status);
+        message = messagesUtils.success.ticketStatusUpdated;
+      } else if (review !== undefined) {
+        ticket = await ticketService.updateReview(ticketId, review);
+        message = messagesUtils.success.ticketReviewUpdated;
+      }
 
-			const data = matchedData(req);
-			const ticketId = parseInt(data.ticketId);
+      handleResponse({
+        res: res,
+        statusCode: 200,
+        message: message,
+        data: ticket,
+      });
+    } catch (error) {
+      handleResponse({
+        res: res,
+        error: error,
+      });
+    }
+  },
+  getTicketsDistance: async (req: Request, res: Response) => {
+    try {
+      checkOrThrowValidationError(req);
 
-			if (data.status) {
-				const status = data.status;
-				const ticket = await ticketService.updateTicketStatus(ticketId, status);
-				res.status(200).json(ticket);
-				return;
-			} else if (data.review) {
-				const review = data.review as Review;
-				const ticket = await ticketService.updateReview(ticketId, review);
-				res.status(200).json(ticket);
-				return;
-			}
-		} catch (error) {
-			handleError(error, res);
-		}
-	},
-	getTicketsDistance: async (req: Request, res: Response) => {
-		try {
-			checkOrThrowValidationError(req);
+      const userId = req.user!.id!;
+      const icar = req.icar!;
 
-			const userId = req.user!.id!;
-			const icarId = req.icar!.id!;
-			const icarPosition = req.icar!.position!;
+      const distanceStatusList = await ticketService.getTicketsDistance(
+        userId,
+        icar.id!,
+        icar.position!,
+      );
 
-			const distanceStatusList = await ticketService.getTicketsDistance(
-				userId,
-				icarId,
-				icarPosition
-			);
-
-			res.status(200).json(distanceStatusList);
-		} catch (error) {
-			handleError(error, res);
-		}
-	},
+      res.status(200).json(distanceStatusList);
+    } catch (error) {
+      handleResponse({
+        res: res,
+        error: error,
+      });
+    }
+  },
 };

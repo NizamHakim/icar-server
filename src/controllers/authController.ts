@@ -1,20 +1,29 @@
 import { Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { authService } from "../services/authService";
-import { handleError } from "../errors/core/handleError";
-import { checkOrThrowValidationError } from "../errors/core/checkOrThrowValidationError";
+import { checkOrThrowValidationError } from "../middlewares/checkOrThrowValidationError";
+import { handleResponse } from "../utils/handleResponse";
+import { messagesUtils } from "../utils/messagesUtils";
 
 export const authController = {
 	getUserData: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
-			const userId = req.user!.id;
-			const user = await authService.getUserData(userId!);
+			const userId = req.user!.id!;
 
-			res.status(200).json(user);
+			const user = await authService.getUserData(userId);
+
+			handleResponse({
+				res: res,
+				statusCode: 200,
+				data: user
+			});
 		} catch (error) {
-			handleError(error, res);
+			handleResponse({
+				res: res,
+				error: error,
+			});
 		}
 	},
 	login: async (req: Request, res: Response) => {
@@ -24,22 +33,39 @@ export const authController = {
 			const { email, password } = matchedData(req);
 			const user = await authService.login(email, password);
 
-			res.status(200).json(user);
+			handleResponse({
+				res: res,
+				statusCode: 200,
+				message: messagesUtils.success.loginSuccess,
+				data: user
+			});
 		} catch (error) {
-			handleError(error, res);
+			handleResponse({
+				res: res,
+				error: error,
+			});
 		}
 	},
 	signup: async (req: Request, res: Response) => {
 		try {
+			console.log(req);
 			checkOrThrowValidationError(req);
 
 			const { name, email, password } = matchedData(req);
 			const newUser = await authService.signup(name, email, password);
 
-			res.status(201).json(newUser);
+			handleResponse({
+				res: res,
+				statusCode: 201,
+				message: messagesUtils.success.userCreated,
+				data: newUser
+			});
 		} catch (error) {
-			handleError(error, res);
+			handleResponse({
+				res: res,
+				error: error,
+			});
 		}
 	},
-	logout: async (req: Request, res: Response) => {},
+	logout: async (req: Request, res: Response) => { },
 };

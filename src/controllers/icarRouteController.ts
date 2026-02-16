@@ -1,38 +1,51 @@
 import { Request, Response } from "express";
 import { icarRouteService } from "../services/icarRouteService";
-import { handleError } from "../errors/core/handleError";
 import { matchedData } from "express-validator";
-import { checkOrThrowValidationError } from "../errors/core/checkOrThrowValidationError";
+import { checkOrThrowValidationError } from "../middlewares/checkOrThrowValidationError";
+import { handleResponse } from "../utils/handleResponse";
 
 export const icarRouteController = {
 	getRoutes: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
-			const data = matchedData(req);
+			const { polyline } = matchedData(req);
 
-			if (data.polyline) {
-				const routes = await icarRouteService.getRoutesWithPolylines();
-				res.status(200).json(routes);
-				return;
+			let routes;
+			if (polyline !== undefined && polyline == true) {
+				routes = await icarRouteService.getRoutesWithPolylines();
+			} else {
+				routes = await icarRouteService.getRoutes();
 			}
 
-			const routes = await icarRouteService.getRoutes();
-			res.status(200).json(routes);
+			handleResponse({
+				res: res,
+				statusCode: 200,
+				data: routes
+			});
 		} catch (error) {
-			handleError(error, res);
+			handleResponse({
+				res: res,
+				error: error,
+			});
 		}
 	},
 	getRouteById: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
-			const data = matchedData(req);
-			const icarRouteId = parseInt(data.icarRouteId);
-
+			const { icarRouteId } = matchedData(req);
 			const route = await icarRouteService.getRouteById(icarRouteId);
-			res.status(200).json(route);
+
+			handleResponse({
+				res: res,
+				statusCode: 200,
+				data: route,
+			});
 		} catch (error) {
-			handleError(error, res);
+			handleResponse({
+				res: res,
+				error: error,
+			});
 		}
 	},
 };

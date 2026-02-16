@@ -1,61 +1,60 @@
-import { BadGatewayError } from "../errors/BadGatewayError";
-import { errorMessages } from "../errors/core/errorMessages";
-import { Coordinate } from "../types/coordinate";
+import { BadGatewayError } from "../utils/errors/expectedError/BadGatewayError";
+import { messagesUtils } from "../utils/messagesUtils";
 
 export const osrmRepository = {
-	getPolyline: async (waypoints: Array<Coordinate>) => {
-		const closedWaypoints = [...waypoints, waypoints[0]];
+  getPolyline: async (waypoints: Array<Coordinate>) => {
+    const closedWaypoints = [...waypoints, waypoints[0]];
 
-		const url = `${process.env.OSRM_URL}/${closedWaypoints
-			.map((waypoint) => `${waypoint.longitude},${waypoint.latitude}`)
-			.join(";")}?geometries=geojson`;
+    const url = `${process.env.OSRM_URL}/${closedWaypoints
+      .map((waypoint) => `${waypoint.longitude},${waypoint.latitude}`)
+      .join(";")}?geometries=geojson`;
 
-		const response = await fetch(url, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-		if (!response.ok) {
-			throw new BadGatewayError(errorMessages.osrm.fetchError);
-		}
+    if (!response.ok) {
+      throw new BadGatewayError(messagesUtils.error.osrm.fetchError);
+    }
 
-		const data = await response.json();
+    const data = await response.json();
 
-		const arrayCoordinates = data.routes[0].geometry.coordinates as Array<
-			[number, number]
-		>;
+    const arrayCoordinates = data.routes[0].geometry.coordinates as Array<
+      [number, number]
+    >;
 
-		return arrayCoordinates.map((coordinate) => {
-			return {
-				latitude: coordinate[1],
-				longitude: coordinate[0],
-			} as Coordinate;
-		});
-	},
-	getDistanceAndDuration: async (
-		fromCoordinate: Coordinate,
-		toCoordinate: Coordinate
-	) => {
-		const url = `${process.env.OSRM_URL}/${fromCoordinate.longitude},${fromCoordinate.latitude};${toCoordinate.longitude},${toCoordinate.latitude}`;
+    return arrayCoordinates.map((coordinate) => {
+      return {
+        latitude: coordinate[1],
+        longitude: coordinate[0],
+      } as Coordinate;
+    });
+  },
+  getDistanceAndDuration: async (
+    fromCoordinate: Coordinate,
+    toCoordinate: Coordinate,
+  ) => {
+    const url = `${process.env.OSRM_URL}/${fromCoordinate.longitude},${fromCoordinate.latitude};${toCoordinate.longitude},${toCoordinate.latitude}`;
 
-		const response = await fetch(url, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-		if (!response.ok) {
-			throw new BadGatewayError(errorMessages.osrm.fetchError);
-		}
+    if (!response.ok) {
+      throw new BadGatewayError(messagesUtils.error.osrm.fetchError);
+    }
 
-		const data = await response.json();
+    const data = await response.json();
 
-		return {
-			distance: Math.floor(data.routes[0].distance),
-			duration: Math.floor(data.routes[0].duration),
-		};
-	},
+    return {
+      distance: Math.floor(data.routes[0].distance),
+      duration: Math.floor(data.routes[0].duration),
+    };
+  },
 };

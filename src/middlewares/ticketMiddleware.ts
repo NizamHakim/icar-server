@@ -1,111 +1,69 @@
 import { checkSchema } from "express-validator";
-import { errorMessages } from "../errors/core/errorMessages";
-import { validateAuthToken } from "./customValidators/validateAuthToken";
 import { validateTicket } from "./customValidators/validateTicket";
 import { validateIcar } from "./customValidators/validateIcar";
+import { messagesUtils } from "../utils/messagesUtils";
 
 export const ticketMiddleware = {
-	validateGetClosestTicket: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
-	}),
-	validateGetTickets: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
-		status: {
-			optional: true,
-			custom: {
-				bail: true,
-				options: validateTicket.validStatus,
-				errorMessage: errorMessages.ticket.invalidStatus,
-			},
-		},
-	}),
-	validateGetTicketById: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
-		ticketId: {
-			isInt: {
-				bail: true,
-				errorMessage: errorMessages.ticket.invalidId,
-			},
-		},
-	}),
-	validateCreateTicket: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
-		scheduleId: {
-			isInt: {
-				bail: true,
-				errorMessage: errorMessages.schedule.invalidId,
-			},
-		},
-	}),
-	validateUpdateTicket: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
-		ticketId: {
-			isInt: {
-				bail: true,
-				errorMessage: errorMessages.ticket.invalidId,
-			},
-		},
-		status: {
-			optional: true,
-			custom: {
-				bail: true,
-				options: validateTicket.validStatus,
-				errorMessage: errorMessages.ticket.invalidStatus,
-			},
-		},
-		review: {
-			optional: true,
-			custom: {
-				bail: true,
-				options: validateTicket.validReview,
-				errorMessage: errorMessages.ticket.invalidReview,
-			},
-		},
-	}),
-	validateGetTicketsDistance: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
-		"x-icar": {
-			custom: {
-				bail: true,
-				options: validateIcar,
-				errorMessage: errorMessages.icar.invalidId,
-			},
-		},
-	}),
+  validateGetTicketsDistance: checkSchema({
+    "x-icar": {
+      custom: {
+        bail: true,
+        options: validateIcar,
+        errorMessage: messagesUtils.error.icar.invalidId,
+      },
+    },
+  }),
+  validateGetTickets: checkSchema({
+    status: {
+      optional: true,
+      custom: {
+        bail: true,
+        options: validateTicket.validStatus,
+        errorMessage: messagesUtils.error.ticket.invalidStatus,
+      },
+    },
+  }),
+  validateGetTicketById: checkSchema({
+    ticketId: {
+      isInt: {
+        bail: true,
+        errorMessage: messagesUtils.error.ticket.invalidId,
+      },
+      toInt: true,
+    },
+  }),
+  validateCreateTicket: checkSchema({
+    scheduleId: {
+      isInt: {
+        bail: true,
+        errorMessage: messagesUtils.error.schedule.invalidId,
+      },
+      toInt: true,
+    },
+  }),
+  validateUpdateTicket: checkSchema({
+    ticketId: {
+      isInt: {
+        bail: true,
+        errorMessage: messagesUtils.error.ticket.invalidId,
+      },
+      toInt: true,
+    },
+    status: {
+      optional: true,
+      custom: {
+        bail: true,
+        options: validateTicket.validStatus,
+        errorMessage: messagesUtils.error.ticket.invalidStatus,
+      },
+    },
+    review: {
+      optional: true,
+      custom: {
+        bail: true,
+        options: validateTicket.validReview,
+        errorMessage: messagesUtils.error.ticket.invalidReview,
+      },
+    },
+  }),
 };

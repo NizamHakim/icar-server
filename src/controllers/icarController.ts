@@ -1,42 +1,52 @@
 import { Request, Response } from "express";
 import { icarService } from "../services/icarService";
-import { handleError } from "../errors/core/handleError";
-import { checkOrThrowValidationError } from "../errors/core/checkOrThrowValidationError";
+import { checkOrThrowValidationError } from "../middlewares/checkOrThrowValidationError";
 import { matchedData } from "express-validator";
+import { handleResponse } from "../utils/handleResponse";
 
 export const icarController = {
 	getIcars: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
-			const data = matchedData(req);
+			const { icarStopId } = matchedData(req);
 
-			if (data.icarStopId) {
-				const icarStopId = parseInt(data.icarStopId);
-				const icars = await icarService.getIcarsWithScheduleByStopId(
-					icarStopId
-				);
-				res.status(200).json(icars);
-				return;
+			let icars;
+			if (icarStopId !== undefined) {
+				icars = await icarService.getIcarsWithSchedulesByStopId(icarStopId);
+			} else {
+				icars = await icarService.getIcars();
 			}
 
-			const icars = await icarService.getIcars();
-			res.status(200).json(icars);
+			handleResponse({
+				res: res,
+				statusCode: 200,
+				data: icars
+			});
 		} catch (error) {
-			handleError(error, res);
+			handleResponse({
+				res: res,
+				error: error,
+			});
 		}
 	},
 	getIcarById: async (req: Request, res: Response) => {
 		try {
 			checkOrThrowValidationError(req);
 
-			const data = matchedData(req);
-			const icarId = parseInt(data.icarId);
+			const { icarId } = matchedData(req);
 			const icar = await icarService.getIcarById(icarId);
 
-			res.status(200).json(icar);
+			handleResponse({
+				res: res,
+				statusCode: 200,
+				data: icar
+			});
 		} catch (error) {
-			handleError(error, res);
+			handleResponse({
+				res: res,
+				error: error,
+			});
 		}
 	},
 };

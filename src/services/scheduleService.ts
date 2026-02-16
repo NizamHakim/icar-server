@@ -1,6 +1,6 @@
 import { scheduleRepository } from "../repositories/scheduleRepository";
 import { ticketRepository } from "../repositories/ticketRepository";
-import { datetime } from "../utils/datetime";
+import { timeUtils } from "../utils/timeUtils";
 
 export const scheduleService = {
 	// USECASE
@@ -15,7 +15,7 @@ export const scheduleService = {
 
 		const response = await Promise.all(
 			scheduleList.map(async (schedule) => {
-				const todayArrivalTime = datetime.timeToDate(schedule.arrivalTime);
+				const todayArrivalTime = timeUtils.timeToDate(schedule.arrivalTime);
 				const ticketCounts = await ticketRepository.ticketCountByArrivedAt(
 					todayArrivalTime
 				);

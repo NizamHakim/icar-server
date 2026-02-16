@@ -1,16 +1,14 @@
 import { checkSchema } from "express-validator";
-import { validateAuthToken } from "./customValidators/validateAuthToken";
-import { errorMessages } from "../errors/core/errorMessages";
-import { validateEmail } from "./customValidators/validateEmail";
-import { validatePassword } from "./customValidators/validatePassword";
+import { validateAuth } from "./customValidators/validateAuth";
+import { messagesUtils } from "../utils/messagesUtils";
 
 export const authMiddleware = {
 	validateToken: checkSchema({
 		"x-auth-token": {
 			custom: {
 				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
+				options: validateAuth.authToken,
+				errorMessage: messagesUtils.error.auth.invalidToken,
 			},
 		},
 	}),
@@ -18,44 +16,44 @@ export const authMiddleware = {
 		name: {
 			notEmpty: {
 				bail: true,
-				errorMessage: errorMessages.auth.nameRequired,
+				errorMessage: messagesUtils.error.auth.nameRequired,
 			},
 		},
 		email: {
 			notEmpty: {
 				bail: true,
-				errorMessage: errorMessages.auth.emailRequired,
+				errorMessage: messagesUtils.error.auth.emailRequired,
 			},
 			isEmail: {
 				bail: true,
-				errorMessage: errorMessages.auth.emailInvalidFormat,
+				errorMessage: messagesUtils.error.auth.emailInvalid,
 			},
 			custom: {
 				bail: true,
-				options: validateEmail.alreadyRegistered,
-				errorMessage: errorMessages.auth.emailAlreadyRegistered,
+				options: validateAuth.emailAlreadyRegistered,
+				errorMessage: messagesUtils.error.auth.emailRegistered,
 			},
 		},
 		password: {
 			notEmpty: {
 				bail: true,
-				errorMessage: errorMessages.auth.passwordRequired,
+				errorMessage: messagesUtils.error.auth.passwordRequired,
 			},
 			isLength: {
 				bail: true,
 				options: { min: 8 },
-				errorMessage: errorMessages.auth.passwordMinLength,
+				errorMessage: messagesUtils.error.auth.passwordTooShort,
 			},
 		},
 		confirmPassword: {
 			notEmpty: {
 				bail: true,
-				errorMessage: errorMessages.auth.confirmPasswordRequired,
+				errorMessage: messagesUtils.error.auth.confirmPasswordRequired,
 			},
 			custom: {
 				bail: true,
-				options: validatePassword.confirmPasswordMismatch,
-				errorMessage: errorMessages.auth.confirmPasswordMismatch,
+				options: validateAuth.confirmPasswordMismatch,
+				errorMessage: messagesUtils.error.auth.confirmPasswordMismatch,
 			},
 		},
 	}),
@@ -63,17 +61,17 @@ export const authMiddleware = {
 		email: {
 			notEmpty: {
 				bail: true,
-				errorMessage: errorMessages.auth.emailRequired,
+				errorMessage: messagesUtils.error.auth.emailRequired,
 			},
 			isEmail: {
 				bail: true,
-				errorMessage: errorMessages.auth.emailInvalidFormat,
+				errorMessage: messagesUtils.error.auth.emailInvalid,
 			},
 		},
 		password: {
 			notEmpty: {
 				bail: true,
-				errorMessage: errorMessages.auth.passwordRequired,
+				errorMessage: messagesUtils.error.auth.passwordRequired,
 			},
 		},
 	}),

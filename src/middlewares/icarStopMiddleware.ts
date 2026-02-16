@@ -1,45 +1,31 @@
 import { checkSchema } from "express-validator";
-import { errorMessages } from "../errors/core/errorMessages";
-import { validateUserPosition } from "./customValidators/validateUserPosition";
-import { validateAuthToken } from "./customValidators/validateAuthToken";
+import { validateUser } from "./customValidators/validateUser";
+import { messagesUtils } from "../utils/messagesUtils";
 
 export const icarStopMiddleware = {
 	validateGetStops: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
 		"x-user-position": {
 			custom: {
 				bail: true,
-				options: validateUserPosition,
-				errorMessage: errorMessages.user.invalidPosition,
+				options: validateUser.position,
+				errorMessage: messagesUtils.error.user.invalidPosition,
 			},
 		},
 	}),
 	validateGetStopById: checkSchema({
-		"x-auth-token": {
-			custom: {
-				bail: true,
-				options: validateAuthToken,
-				errorMessage: errorMessages.auth.invalidToken,
-			},
-		},
 		"x-user-position": {
 			custom: {
 				bail: true,
-				options: validateUserPosition,
-				errorMessage: errorMessages.user.invalidPosition,
+				options: validateUser.position,
+				errorMessage: messagesUtils.error.user.invalidPosition,
 			},
 		},
 		icarStopId: {
 			isInt: {
 				bail: true,
-				errorMessage: errorMessages.icarStop.invalidId,
+				errorMessage: messagesUtils.error.icarStop.invalidId,
 			},
+			toInt: true,
 		},
 	}),
 };

@@ -1,6 +1,5 @@
 import { checkSchema } from "express-validator";
-import { errorMessages } from "../errors/core/errorMessages";
-import { validateAuthToken } from "./customValidators/validateAuthToken";
+import { messagesUtils } from "../utils/messagesUtils";
 
 export const icarMiddleware = {
 	validateGetIcars: checkSchema({
@@ -8,16 +7,18 @@ export const icarMiddleware = {
 			optional: true,
 			isInt: {
 				bail: true,
-				errorMessage: errorMessages.icarStop.invalidId,
+				errorMessage: messagesUtils.error.icarStop.invalidId,
 			},
+			toInt: true,
 		},
 	}),
 	validateGetIcarById: checkSchema({
 		icarId: {
 			isInt: {
 				bail: true,
-				errorMessage: errorMessages.icar.invalidId,
+				errorMessage: messagesUtils.error.icar.invalidId,
 			},
+			toInt: true,
 		},
 	}),
 };
